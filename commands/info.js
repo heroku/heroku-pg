@@ -5,6 +5,7 @@ let cli = require('heroku-cli-util')
 let _ = require('lodash')
 let url = require('url')
 let host = require('../lib/host')
+let resolve = require('heroku-cli-addons').resolve
 
 function databaseNameFromUrl (uri, config) {
   delete config.DATABASE_URL
@@ -32,13 +33,27 @@ let notDatabaseUrl = (a) => !a.config_vars.find((c) => c === 'DATABASE_URL')
 
 function * run (context, heroku) {
   let app = context.app
+  let db = context.args.database
+  let addons = []
   let config = heroku.get(`/apps/${app}/config-vars`)
-  let addons = yield heroku.request({
-    method: 'get',
-    path: `/apps/${app}/addons`
-  })
-  addons = addons.filter((a) => a.addon_service.name === 'heroku-postgresql')
-  addons = _.sortBy(addons, notDatabaseUrl, 'name')
+
+  if (db) {
+    addons = yield [resolve.addon(heroku, app, db)]
+    if (!addons[0]) {
+      cli.error(`${cli.color.addon(db)} was not found on ${cli.color.app(app)}`)
+      process.exit(1)
+      return
+    }
+  } else {
+    addons = yield heroku.get(`/apps/${app}/addons`)
+    addons = addons.filter((a) => a.addon_service.name === 'heroku-postgresql')
+    addons = _.sortBy(addons, notDatabaseUrl, 'name')
+
+    if (addons.length === 0) {
+      cli.log(`${cli.color.app(app)} has no heroku-postgresql databases.`)
+      return
+    }
+  }
 
   let dbs = yield addons.map((a) => {
     return {
@@ -52,18 +67,17 @@ function * run (context, heroku) {
     }
   })
 
-  if (addons.length === 0) {
-    cli.log(`${cli.color.app(app)} has no heroku-postgresql databases.`)
-  } else {
-    dbs.forEach(displayDB)
-  }
+  dbs.forEach(displayDB)
 }
 
-module.exports = {
+let cmd = {
   topic: 'pg',
   needsApp: true,
   needsAuth: true,
+  args: [{name: 'database', optional: true}],
   run: cli.command({preauth: true}, co.wrap(run))
 }
 
 exports.displayDB = displayDB
+exports.root = cmd
+exports.info = Object.assign({}, cmd, {command: 'info'})
