@@ -72,5 +72,26 @@ Following:   ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
       .then(() => api.done())
       .then(() => pg.done())
     })
+
+    it('shows postgres info for single database when arg sent in', () => {
+      let api = nock('https://api.heroku.com:443')
+      .get('/apps/myapp/config-vars')
+      .reply(200, config)
+      .get('/apps/myapp/addons/postgres-2')
+      .reply(200, addons[1])
+      let pg = nock('https://postgres-starter-api.heroku.com:443')
+      .get('/client/v11/databases/postgres-2')
+      .reply(200, dbB)
+      return cmd.run({app: 'myapp', args: {database: 'postgres-2'}})
+      .then(() => expect(cli.stdout, 'to equal', `=== postgres-2
+Config Vars: HEROKU_POSTGRESQL_BRONZE_URL
+Plan:        Hobby-dev
+Following:   ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
+
+`))
+      .then(() => expect(cli.stderr, 'to equal', ''))
+      .then(() => api.done())
+      .then(() => pg.done())
+    })
   })
 })
