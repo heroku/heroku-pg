@@ -39,11 +39,6 @@ function * run (context, heroku) {
 
   if (db) {
     addons = yield [resolve.addon(heroku, app, db)]
-    if (!addons[0]) {
-      cli.error(`${cli.color.addon(db)} was not found on ${cli.color.app(app)}`)
-      process.exit(1)
-      return
-    }
   } else {
     addons = yield heroku.get(`/apps/${app}/addons`)
     addons = addons.filter((a) => a.addon_service.name === 'heroku-postgresql')
