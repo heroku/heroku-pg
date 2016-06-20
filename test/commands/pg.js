@@ -20,7 +20,7 @@ describe('pg', () => {
       .reply(200, config)
       .get('/apps/myapp/addons')
       .reply(200, addons)
-      return cmd.run({app: 'myapp'})
+      return cmd.run({app: 'myapp', args: {}})
       .then(() => expect(cli.stdout, 'to equal', 'myapp has no heroku-postgresql databases.\n'))
       .then(() => expect(cli.stderr, 'to equal', ''))
       .then(() => api.done())
@@ -56,7 +56,7 @@ describe('pg', () => {
       .reply(200, dbA)
       .get('/client/v11/databases/postgres-2')
       .reply(200, dbB)
-      return cmd.run({app: 'myapp'})
+      return cmd.run({app: 'myapp', args: {}})
       .then(() => expect(cli.stdout, 'to equal', `=== postgres-1
 Config Vars: DATABASE_URL, HEROKU_POSTGRESQL_PINK_URL
 Plan:        Hobby-dev
