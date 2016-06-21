@@ -1,15 +1,14 @@
 'use strict'
 
-let co = require('co')
-let cli = require('heroku-cli-util')
-let _ = require('lodash')
-let url = require('url')
-let host = require('../lib/host')
-let resolve = require('heroku-cli-addons').resolve
+const co = require('co')
+const cli = require('heroku-cli-util')
 
 function databaseNameFromUrl (uri, config) {
+  const invert = require('lodash.invert')
+  const url = require('url')
+
   delete config.DATABASE_URL
-  let name = _.invert(config)[uri]
+  let name = invert(config)[uri]
   if (name) return name.replace(/_URL$/, '')
   uri = url.parse(uri)
   return `${uri.hostname}:${uri.port || 5432}${uri.path}`
@@ -29,21 +28,19 @@ function displayDB (db) {
   cli.log()
 }
 
-let notDatabaseUrl = (a) => !a.config_vars.find((c) => c === 'DATABASE_URL')
-
 function * run (context, heroku) {
-  let app = context.app
-  let db = context.args.database
+  const host = require('../lib/host')
+  const fetcher = require('../lib/fetcher')
+  const app = context.app
+  const db = context.args.database
+
   let addons = []
   let config = heroku.get(`/apps/${app}/config-vars`)
 
   if (db) {
-    addons = yield [resolve.addon(heroku, app, db)]
+    addons = yield [fetcher.addon(heroku, app, db)]
   } else {
-    addons = yield heroku.get(`/apps/${app}/addons`)
-    addons = addons.filter((a) => a.addon_service.name === 'heroku-postgresql')
-    addons = _.sortBy(addons, notDatabaseUrl, 'name')
-
+    addons = yield fetcher.all(heroku, app)
     if (addons.length === 0) {
       cli.log(`${cli.color.app(app)} has no heroku-postgresql databases.`)
       return

@@ -1,29 +1,44 @@
 'use strict'
 /* global describe it beforeEach afterEach context */
 
-let expect = require('unexpected')
-let nock = require('nock')
-let cmd = require('../../index.js').commands.find((c) => c.topic === 'pg' && !c.command)
-let cli = require('heroku-cli-util')
+const cli = require('heroku-cli-util')
+const expect = require('unexpected')
+const nock = require('nock')
+const proxyquire = require('proxyquire')
+
+let all = []
+let addon
+const fetcher = {
+  all: () => all,
+  addon: () => addon
+}
+
+const cmd = proxyquire('../../commands/info', {
+  '../lib/fetcher': fetcher
+}).root
 
 describe('pg', () => {
-  beforeEach(() => cli.mockConsole())
-  afterEach(() => nock.cleanAll())
+  let api, pg
+
+  beforeEach(() => {
+    api = nock('https://api.heroku.com:443')
+    pg = nock('https://postgres-starter-api.heroku.com:443')
+    cli.mockConsole()
+  })
+
+  afterEach(() => {
+    nock.cleanAll()
+    api.done()
+    pg.done()
+  })
 
   context('with 0 dbs', () => {
-    let config = {}
-    let addons = []
-
     it('shows empty state', () => {
-      let api = nock('https://api.heroku.com:443')
-      .get('/apps/myapp/config-vars')
-      .reply(200, config)
-      .get('/apps/myapp/addons')
-      .reply(200, addons)
+      all = []
+
       return cmd.run({app: 'myapp', args: {}})
       .then(() => expect(cli.stdout, 'to equal', 'myapp has no heroku-postgresql databases.\n'))
       .then(() => expect(cli.stderr, 'to equal', ''))
-      .then(() => api.done())
     })
   })
 
@@ -32,8 +47,8 @@ describe('pg', () => {
     let config = {HEROKU_POSTGRESQL_COBALT_URL: 'postgres://uxxxxxxxxx:pxxxxxxxx@ec2-54-111-111-1.compute-1.amazonaws.com:5452/dxxxxxxxxxxxx'}
     let addonService = {name: 'heroku-postgresql'}
     let addons = [
-      {name: 'postgres-1', addon_service: addonService, plan, config_vars: ['DATABASE_URL', 'HEROKU_POSTGRESQL_PINK_URL']},
-      {name: 'postgres-2', addon_service: addonService, plan, config_vars: ['HEROKU_POSTGRESQL_BRONZE_URL']}
+      {id: 1, name: 'postgres-1', addon_service: addonService, plan, config_vars: ['DATABASE_URL', 'HEROKU_POSTGRESQL_PINK_URL']},
+      {id: 2, name: 'postgres-2', addon_service: addonService, plan, config_vars: ['HEROKU_POSTGRESQL_BRONZE_URL']}
     ]
     let dbA = {info: [
       {name: 'Plan', values: ['Hobby-dev']},
@@ -46,16 +61,13 @@ describe('pg', () => {
     ]}
 
     it('shows postgres info', () => {
-      let api = nock('https://api.heroku.com:443')
-      .get('/apps/myapp/config-vars')
-      .reply(200, config)
-      .get('/apps/myapp/addons')
-      .reply(200, addons)
-      let pg = nock('https://postgres-starter-api.heroku.com:443')
-      .get('/client/v11/databases/postgres-1')
-      .reply(200, dbA)
-      .get('/client/v11/databases/postgres-2')
-      .reply(200, dbB)
+      all = addons
+
+      api.get('/apps/myapp/config-vars').reply(200, config)
+      pg
+      .get('/client/v11/databases/postgres-1').reply(200, dbA)
+      .get('/client/v11/databases/postgres-2').reply(200, dbB)
+
       return cmd.run({app: 'myapp', args: {}})
       .then(() => expect(cli.stdout, 'to equal', `=== postgres-1
 Config Vars: DATABASE_URL, HEROKU_POSTGRESQL_PINK_URL
@@ -69,17 +81,13 @@ Following:   ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
 
 `))
       .then(() => expect(cli.stderr, 'to equal', ''))
-      .then(() => api.done())
-      .then(() => pg.done())
     })
 
     it('shows postgres info for single database when arg sent in', () => {
-      let api = nock('https://api.heroku.com:443')
-      .get('/apps/myapp/config-vars')
-      .reply(200, config)
-      .get('/apps/myapp/addons/postgres-2')
-      .reply(200, addons[1])
-      let pg = nock('https://postgres-starter-api.heroku.com:443')
+      addon = addons[1]
+      api.get('/apps/myapp/config-vars').reply(200, config)
+
+      pg
       .get('/client/v11/databases/postgres-2')
       .reply(200, dbB)
       return cmd.run({app: 'myapp', args: {database: 'postgres-2'}})
@@ -90,8 +98,6 @@ Following:   ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
 
 `))
       .then(() => expect(cli.stderr, 'to equal', ''))
-      .then(() => api.done())
-      .then(() => pg.done())
     })
   })
 })
