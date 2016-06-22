@@ -12,7 +12,8 @@
     "heroku-cli-addons": "1.0.4",
     "heroku-cli-util": "6.0.13",
     "lodash.invert": "4.1.1",
-    "lodash.sortby": "4.5.0"
+    "lodash.sortby": "4.5.0",
+    "lodash.uniqby": "4.5.0"
   },
   "devDependencies": {
     "codeclimate-test-reporter": "0.3.3",
