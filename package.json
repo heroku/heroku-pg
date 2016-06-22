@@ -24,7 +24,7 @@
     "nyc": "6.6.1",
     "proxyquire": "1.7.9",
     "standard": "7.1.2",
-    "unexpected": "10.13.3"
+    "unexpected": "10.14.1"
   },
   "homepage": "https://github.com/heroku/heroku-pg",
   "keywords": [
