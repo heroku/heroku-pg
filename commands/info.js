@@ -19,14 +19,14 @@ function databaseNameFromUrl (uri, config) {
   let names = configVarNamesFromValue(config, uri)
   let name = names.pop()
   while (name === 'DATABASE_URL') name = names.pop()
-  if (name) return name.replace(/_URL$/, '')
+  if (name) return cli.color.configVar(name.replace(/_URL$/, ''))
   uri = url.parse(uri)
   return `${uri.hostname}:${uri.port || 5432}${uri.path}`
 }
 
 function displayDB (db) {
   cli.styledHeader(db.configVars.map(c => cli.color.configVar(c)).join(', '))
-  db.db.info.push({name: 'Add-on', values: [db.addon.name]})
+  db.db.info.push({name: 'Add-on', values: [cli.color.addon(db.addon.name)]})
   let info = db.db.info.reduce((info, i) => {
     if (i.values.length > 0) {
       info[i.name] = i.resolve_db_name ? databaseNameFromUrl(i.values[0], db.config) : i.values.join(', ')
