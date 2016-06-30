@@ -18,7 +18,7 @@ function databaseNameFromUrl (uri, config) {
 
   let names = configVarNamesFromValue(config, uri)
   let name = names.pop()
-  while (!name || name === 'DATABASE_URL') name = names.pop()
+  while (name && name !== 'DATABASE_URL') name = names.pop()
   if (name) return name.replace(/_URL$/, '')
   uri = url.parse(uri)
   return `${uri.hostname}:${uri.port || 5432}${uri.path}`
