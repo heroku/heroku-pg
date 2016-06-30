@@ -23,9 +23,9 @@
     "mocha-junit-reporter": "1.11.1",
     "nock": "8.0.0",
     "nyc": "6.6.1",
-    "proxyquire": "1.7.9",
+    "proxyquire": "1.7.10",
     "standard": "7.1.2",
-    "unexpected": "10.14.1"
+    "unexpected": "10.14.2"
   },
   "homepage": "https://github.com/heroku/heroku-pg",
   "keywords": [

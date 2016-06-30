@@ -44,21 +44,29 @@ describe('pg', () => {
 
   context('with 2 dbs', () => {
     let plan = {name: 'heroku-postresql:hobby-dev'}
-    let config = {HEROKU_POSTGRESQL_COBALT_URL: 'postgres://uxxxxxxxxx:pxxxxxxxx@ec2-54-111-111-1.compute-1.amazonaws.com:5452/dxxxxxxxxxxxx'}
+    let config = {
+      DATABASE_URL: 'postgres://uxxxxxxxxx:pxxxxxxxx@ec2-54-111-111-1.compute-1.amazonaws.com:5452/dxxxxxxxxxxxx',
+      HEROKU_POSTGRESQL_COBALT_URL: 'postgres://uxxxxxxxxx:pxxxxxxxx@ec2-54-111-111-1.compute-1.amazonaws.com:5452/dxxxxxxxxxxxx',
+      HEROKU_POSTGRESQL_PURPLE_URL: 'postgres://uxxxxxxxxx:pxxxxxxxx@ec3-54-111-111-1.compute-1.amazonaws.com:5452/dxxxxxxxxxxxx'
+    }
     let addonService = {name: 'heroku-postgresql'}
     let addons = [
-      {id: 1, name: 'postgres-1', addon_service: addonService, plan, config_vars: ['DATABASE_URL', 'HEROKU_POSTGRESQL_PINK_URL']},
-      {id: 2, name: 'postgres-2', addon_service: addonService, plan, config_vars: ['HEROKU_POSTGRESQL_BRONZE_URL']}
+      {id: 1, name: 'postgres-1', addon_service: addonService, plan},
+      {id: 2, name: 'postgres-2', addon_service: addonService, plan}
     ]
     let dbA = {info: [
       {name: 'Plan', values: ['Hobby-dev']},
       {name: 'Empty', values: []},
       {name: 'Following', resolve_db_name: true, values: ['postgres://uxxxxxxxxx:pxxxxxxxx@ec2-54-111-111-1.compute-1.amazonaws.com:5452/dxxxxxxxxxxxx']}
-    ]}
+    ],
+    resource_url: config.DATABASE_URL
+    }
     let dbB = {info: [
       {name: 'Plan', values: ['Hobby-dev']},
       {name: 'Following', resolve_db_name: true, values: ['postgres://uxxxxxxxxx:pxxxxxxxx@ec2-55-111-111-1.compute-1.amazonaws.com/dxxxxxxxxxxxx']}
-    ]}
+    ],
+    resource_url: config.HEROKU_POSTGRESQL_PURPLE_URL
+    }
 
     it('shows postgres info', () => {
       all = addons
@@ -69,15 +77,15 @@ describe('pg', () => {
       .get('/client/v11/databases/postgres-2').reply(200, dbB)
 
       return cmd.run({app: 'myapp', args: {}})
-      .then(() => expect(cli.stdout, 'to equal', `=== postgres-1
-Config Vars: DATABASE_URL, HEROKU_POSTGRESQL_PINK_URL
-Plan:        Hobby-dev
-Following:   HEROKU_POSTGRESQL_COBALT
+      .then(() => expect(cli.stdout, 'to equal', `=== DATABASE_URL, HEROKU_POSTGRESQL_COBALT_URL
+Plan:      Hobby-dev
+Following: HEROKU_POSTGRESQL_COBALT
+Add-on:    postgres-1
 
-=== postgres-2
-Config Vars: HEROKU_POSTGRESQL_BRONZE_URL
-Plan:        Hobby-dev
-Following:   ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
+=== HEROKU_POSTGRESQL_PURPLE_URL
+Plan:      Hobby-dev
+Following: ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
+Add-on:    postgres-2
 
 `))
       .then(() => expect(cli.stderr, 'to equal', ''))
@@ -91,10 +99,10 @@ Following:   ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
       .get('/client/v11/databases/postgres-2')
       .reply(200, dbB)
       return cmd.run({app: 'myapp', args: {database: 'postgres-2'}})
-      .then(() => expect(cli.stdout, 'to equal', `=== postgres-2
-Config Vars: HEROKU_POSTGRESQL_BRONZE_URL
-Plan:        Hobby-dev
-Following:   ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
+      .then(() => expect(cli.stdout, 'to equal', `=== HEROKU_POSTGRESQL_PURPLE_URL
+Plan:      Hobby-dev
+Following: ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
+Add-on:    postgres-2
 
 `))
       .then(() => expect(cli.stderr, 'to equal', ''))
