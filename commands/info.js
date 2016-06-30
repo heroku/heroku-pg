@@ -14,11 +14,11 @@ function configVarNamesFromValue (config, value) {
 }
 
 function databaseNameFromUrl (uri, config) {
-  const invert = require('lodash.invert')
   const url = require('url')
 
-  delete config.DATABASE_URL
-  let name = invert(config)[uri]
+  let names = configVarNamesFromValue(config, uri)
+  let name = names.pop()
+  while (!name || name === 'DATABASE_URL') name = names.pop()
   if (name) return name.replace(/_URL$/, '')
   uri = url.parse(uri)
   return `${uri.hostname}:${uri.port || 5432}${uri.path}`
@@ -77,7 +77,7 @@ function * run (context) {
 }
 
 let cmd = {
-  topic: '_pg',
+  topic: 'pg',
   needsApp: true,
   needsAuth: true,
   args: [{name: 'database', optional: true}],
