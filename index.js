@@ -10,4 +10,6 @@ exports.commands = [
   require('./commands/wait')
 ]
 
+exports.host = require('./lib/host')
+exports.fetcher = require('./lib/fetcher')
 exports.psql = require('./lib/psql')
