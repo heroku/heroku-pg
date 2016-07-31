@@ -28,7 +28,7 @@ describe('fetcher', () => {
         }
         return Promise.resolve()
       }
-      return fetcher.addon(new Heroku(), 'myapp', 'DATABASE_URL')
+      return fetcher(new Heroku()).addon('myapp', 'DATABASE_URL')
       .then(addon => {
         expect(addon.name, 'to equal', 'postgres-1')
       })
@@ -45,7 +45,7 @@ describe('fetcher', () => {
       ]
       api.get('/apps/myapp/addon-attachments').reply(200, attachments)
 
-      return fetcher.all(new Heroku(), 'myapp')
+      return fetcher(new Heroku()).all('myapp')
       .then(addons => {
         expect(addons[0], 'to satisfy', {name: 'postgres-1'})
         expect(addons[1], 'to satisfy', {name: 'postgres-2'})
