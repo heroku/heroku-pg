@@ -9,3 +9,5 @@ exports.commands = [
   require('./commands/info').root,
   require('./commands/wait')
 ]
+
+exports.psql = require('./lib/psql')
