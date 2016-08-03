@@ -35,6 +35,25 @@ describe('fetcher', () => {
     })
   })
 
+  describe('database', () => {
+    it('returns db connection info', () => {
+      resolver.attachment = (_, app, db) => {
+        if (app === 'myapp' && db === 'DATABASE_URL') {
+          return Promise.resolve({addon: {id: 100, name: 'postgres-1'}})
+        }
+        return Promise.resolve()
+      }
+      api.get('/addons/100').reply(200, {
+        config_vars: ['DATABASE_URL']
+      })
+      api.get('/apps/myapp/config-vars').reply(200, {
+        'DATABASE_URL': 'postgres://pguser:pgpass@pghost.com/pgdb'
+      })
+      return fetcher(new Heroku()).database('myapp', 'DATABASE_URL')
+      .then(db => expect(db.user, 'to equal', 'pguser'))
+    })
+  })
+
   describe('all', () => {
     it('returns all addons attached to app', () => {
       let plan = {name: 'heroku-postgresql:hobby-dev'}
