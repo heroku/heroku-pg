@@ -25,7 +25,7 @@ const cmd = proxyquire('../../commands/kill', {
   '../lib/psql': psql
 })
 
-describe('pg', () => {
+describe('pg:kill', () => {
   let api
 
   beforeEach(() => {
