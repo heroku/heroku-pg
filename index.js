@@ -5,6 +5,7 @@ exports.topics = [
 ]
 
 exports.commands = [
+  require('./commands/backups'),
   require('./commands/info').info,
   require('./commands/info').root,
   require('./commands/kill'),
