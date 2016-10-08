@@ -31,10 +31,10 @@ function * run (context, heroku) {
     backupURL = dropboxURL(backupName)
   } else {
     let backupApp
-    if (args.backup && args.backup.match(/::/)) {
-      [backupApp, backupName] = args.backup.split('::')
+    if (backupName && backupName.match(/::/)) {
+      [backupApp, backupName] = backupName.split('::')
     } else {
-      [backupApp, backupName] = [app, args.backup]
+      backupApp = app
     }
     let transfers = yield heroku.get(`/client/v11/apps/${backupApp}/transfers`, {host: host()})
     let backups = transfers.filter(t => t.from_type === 'pg_dump' && t.to_type === 'gof3r')
