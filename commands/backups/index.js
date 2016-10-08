@@ -14,7 +14,7 @@ function * run (context, heroku) {
     process.exit(status)
   }
 
-  const pgbackups = require('../../lib/pgbackups')
+  const pgbackups = require('../../lib/pgbackups')(context, heroku)
   const sortBy = require('lodash.sortby')
   const host = require('../../lib/host')()
   const app = context.app
