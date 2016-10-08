@@ -4,6 +4,16 @@ const co = require('co')
 const cli = require('heroku-cli-util')
 
 function * run (context, heroku) {
+  if (context.args.length > 0) {
+    // backwards compatible for executing commands like
+    // `heroku pg:backups info` instead of `heroku pg:backups:info`
+    const {spawnSync} = require('child_process')
+    let args = context.args.slice()
+    args[0] = `pg:backups:${args[0]}`
+    let {status} = spawnSync('heroku', args, {env: process.env, stdio: 'inherit'})
+    process.exit(status)
+  }
+
   const pgbackups = require('../../lib/pgbackups')
   const sortBy = require('lodash.sortby')
   const host = require('../../lib/host')()
@@ -83,5 +93,6 @@ module.exports = {
   command: 'backups',
   needsApp: true,
   needsAuth: true,
+  variableArgs: true,
   run: cli.command({preauth: true}, co.wrap(run))
 }
