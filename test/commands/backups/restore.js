@@ -43,7 +43,7 @@ describe('pg:backups:restore', () => {
       pg.get('/client/v11/apps/myapp/transfers/100-001').reply(200, {
         finished_at: '101',
         succeeded: true,
-        logs: []
+        logs: [{created_at: '100', message: 'log message 1'}]
       })
     })
 
@@ -57,9 +57,22 @@ Stop a running restore with heroku pg:backups:cancel.
 `))
       .then(() => expect(cli.stderr, 'to equal', `Starting restore of b005 to postgres-1... done
 Restoring... pending
-
+100 log message 1
 Restoring... done
 `))
+    })
+
+    it('shows verbose output', () => {
+      return cmd.run({app: 'myapp', args: {}, flags: {confirm: 'myapp', verbose: true}})
+      .then(() => expect(cli.stdout, 'to equal', `
+Use Ctrl-C at any time to stop monitoring progress; the backup will continue restoring.
+Use heroku pg:backups to check progress.
+Stop a running restore with heroku pg:backups:cancel.
+
+Restoring...
+100 log message 1
+`))
+      .then(() => expect(cli.stderr, 'to equal', 'Starting restore of b005 to postgres-1... done\n'))
     })
 
     it('restores a specific db', () => {
@@ -72,7 +85,7 @@ Stop a running restore with heroku pg:backups:cancel.
 `))
       .then(() => expect(cli.stderr, 'to equal', `Starting restore of b005 to postgres-1... done
 Restoring... pending
-
+100 log message 1
 Restoring... done
 `))
     })
@@ -87,7 +100,7 @@ Stop a running restore with heroku pg:backups:cancel.
 `))
       .then(() => expect(cli.stderr, 'to equal', `Starting restore of b005 to postgres-1... done
 Restoring... pending
-
+100 log message 1
 Restoring... done
 `))
     })
