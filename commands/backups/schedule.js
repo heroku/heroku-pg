@@ -33,9 +33,8 @@ function * run (context, heroku) {
 
   const {app, args, flags} = context
 
-  let db = yield fetcher.addon(app, args.database)
-
   let schedule = parse(flags.at)
+  let db = yield fetcher.addon(app, args.database)
 
   let at = cli.color.cyan(`${schedule.hour}:00 ${schedule.timezone}`)
   yield cli.action(`Scheduling automatic daily backups of ${cli.color.addon(db.name)} at ${at}`, co(function * () {
@@ -54,7 +53,6 @@ module.exports = {
   description: 'schedule daily backups for given database',
   needsApp: true,
   needsAuth: true,
-  variableArgs: true,
   args: [
     {name: 'database', optional: true}
   ],
