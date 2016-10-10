@@ -57,6 +57,38 @@ Backup Size:      97.66 KB
     })
   })
 
+  context('with specifying a legacy backup', () => {
+    beforeEach(() => {
+      pg.get('/client/v11/apps/myapp/transfers').reply(200, [
+        {name: 'ob001', num: 1, from_type: 'pg_dump', to_type: 'gof3r', options: {pgbackups_name: 'b001'}}
+      ])
+      pg.get('/client/v11/apps/myapp/transfers/1?verbose=true').reply(200, {
+        name: 'ob001',
+        options: {pgbackups_name: 'b001'},
+        num: 1,
+        source_bytes: 1000000,
+        processed_bytes: 100000,
+        from_name: 'RED',
+        logs: [{created_at: '100', message: 'foo'}]
+      })
+    })
+
+    it('shows the backup', () => {
+      return cmd.run({app: 'myapp', args: {backup_id: 'ob001'}})
+      .then(() => expect(cli.stdout, 'to equal', `=== Backup ob001
+Database:         RED
+Status:           Pending
+Type:             Manual
+Original DB Size: 976.56 KB
+Backup Size:      97.66 KB
+
+=== Backup Logs
+100 foo
+
+`))
+    })
+  })
+
   context('without specifying a backup', () => {
     beforeEach(() => {
       pg.get('/client/v11/apps/myapp/transfers').reply(200, [
