@@ -24,8 +24,11 @@ function databaseNameFromUrl (uri, config) {
   return `${uri.hostname}:${uri.port || 5432}${uri.path}`
 }
 
-function displayDB (db) {
+function displayDB (db, app) {
   cli.styledHeader(db.configVars.map(c => cli.color.configVar(c)).join(', '))
+  if (db.addon.app.name !== app) {
+    db.db.info.push({name: 'App', values: [db.addon.app.name]})
+  }
   db.db.info.push({name: 'Add-on', values: [cli.color.addon(db.addon.name)]})
   let info = db.db.info.reduce((info, i) => {
     if (i.values.length > 0) {
@@ -82,7 +85,7 @@ function * run (context, heroku) {
   dbs.forEach(db => { db.configVars = configVarNamesFromValue(db.config, db.db.resource_url) })
   dbs = sortBy(dbs, db => db.configVars[0] !== 'DATABASE_URL', 'configVars[0]')
 
-  dbs.forEach(displayDB)
+  dbs.forEach(db => displayDB(db, app))
 }
 
 let cmd = {
