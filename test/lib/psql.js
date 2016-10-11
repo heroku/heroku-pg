@@ -27,11 +27,11 @@ describe('psql', () => {
         PGHOST: 'localhost'
       })
       let opts = {env, encoding: 'utf8', stdio: [0, 'pipe', 2]}
-      cp.expects('spawnSync').withExactArgs('psql', ['--command', 'SELECT DATE();'], opts).once().returns({
+      cp.expects('spawnSync').withExactArgs('psql', ['--command', 'SELECT NOW();'], opts).once().returns({
         stdout: '',
         status: 0
       })
-      return psql.exec(db, 'SELECT DATE();')
+      return psql.exec(db, 'SELECT NOW();')
       .then(() => cp.verify())
     }))
   })
