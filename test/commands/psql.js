@@ -25,7 +25,7 @@ const fetcher = () => ({
 })
 const cmd = proxyquire('../../commands/psql', {
   '../lib/fetcher': fetcher
-})
+})[0]
 
 describe('psql', () => {
   beforeEach(() => {

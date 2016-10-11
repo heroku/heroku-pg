@@ -18,9 +18,7 @@ function * run (context, heroku) {
   }
 }
 
-module.exports = {
-  topic: 'pg',
-  command: 'psql',
+let cmd = {
   description: 'open a psql shell to the database',
   wantsApp: true,
   needsAuth: true,
@@ -28,3 +26,8 @@ module.exports = {
   args: [{name: 'database', optional: true}],
   run: cli.command({preauth: true}, co.wrap(run))
 }
+
+module.exports = [
+  Object.assign({topic: 'pg', command: 'psql'}, cmd),
+  Object.assign({topic: 'psql'}, cmd)
+]
