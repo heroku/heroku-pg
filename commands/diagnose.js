@@ -34,7 +34,6 @@ function * run (context, heroku) {
 available for one month after creation on ${report.created_at}
 `)
     let display = checks => {
-      if (!checks.length) return
       for (let check of checks) {
         cli.log(cli.color[check.status](`${check.status.toUpperCase()}: ${check.name}`))
         if (check.status === 'green') continue
