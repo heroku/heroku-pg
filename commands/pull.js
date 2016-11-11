@@ -53,6 +53,7 @@ const verifyExtensionsMatch = co.wrap(function * (source, target) {
     target: psql.exec(target, sql),
     source: psql.exec(source, sql)
   }
+  // TODO: it shouldn't matter if the target has *more* extensions than the source
   if (extensions.target !== extensions.source) {
     cli.warn(`WARNING: Extensions in newly created target database differ from existing source database.
 Target extensions:
