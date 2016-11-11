@@ -29,7 +29,7 @@ function * run (context, heroku) {
       host: host(db)
     })
     if (link.message) throw new Error(link.message)
-    cli.action.done(cli.color.cyan(link.name))
+    cli.action.done(`done, ${cli.color.cyan(link.name)}`)
   }))
 }
 

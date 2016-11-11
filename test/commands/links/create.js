@@ -40,6 +40,6 @@ describe('pg:links:create', () => {
     pg.post('/client/v11/databases/postgres-1/links', {target: 'postgres-1', as: 'foobar'}).reply(200, {name: 'foobar'})
     return cmd.run({app: 'myapp', args: {}, flags: {confirm: 'myapp', as: 'foobar'}})
     .then(() => expect(cli.stdout, 'to equal', ''))
-    .then(() => expect(cli.stderr, 'to equal', 'Adding link from postgres-1 to postgres-1... foobar\n'))
+    .then(() => expect(cli.stderr, 'to equal', 'Adding link from postgres-1 to postgres-1... done, foobar\n'))
   })
 })
