@@ -130,7 +130,6 @@ Stop a running restore with heroku pg:backups:cancel.
 `))
       .then(() => expect(cli.stderr, 'to equal', `Starting restore of https://www.dropbox.com to postgres-1... done
 Restoring... pending
-
 Restoring... done
 `))
     })
