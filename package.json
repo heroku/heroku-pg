@@ -23,6 +23,7 @@
     "smooth-progress": "1.1.0",
     "string": "3.3.3",
     "strip-eof": "1.0.0"
+    "tunnel-ssh": "4.1.1"
   },
   "devDependencies": {
     "mocha": "3.1.2",
