@@ -20,7 +20,7 @@
     "lodash.uniqby": "4.7.0",
     "mkdirp": "0.5.1",
     "sinon": "1.17.6",
-    "smooth-progress": "1.0.4",
+    "smooth-progress": "1.1.0",
     "string": "3.3.3",
     "strip-eof": "1.0.0"
   },

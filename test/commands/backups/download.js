@@ -30,14 +30,14 @@ describe('pg:backups:download', () => {
         {succeeded: true, to_type: 'gof3r', num: 3}
       ])
     })
-    it('shows URL', () => {
+    it('downloads to latest.dump', () => {
       return cmd.run({app: 'myapp', args: {}, flags: {output: './tmp/latest.dump'}})
       .then(() => expect(fs.readFileSync('./tmp/latest.dump', 'utf8'), 'to equal', '{}'))
     })
   })
 
   context('with id', () => {
-    it('shows URL', () => {
+    it('downloads to latest.dump', () => {
       return cmd.run({app: 'myapp', args: {backup_id: 'b003'}, flags: {output: './tmp/latest.dump'}})
       .then(() => expect(fs.readFileSync('./tmp/latest.dump', 'utf8'), 'to equal', '{}'))
     })
