@@ -37,6 +37,6 @@ let cmd = {
 
 module.exports = [
   Object.assign({command: 'backups:url'}, cmd),
-  Object.assign({command: 'backups:public-url'}, cmd),
-  Object.assign({command: 'backups:publicurl'}, cmd)
+  Object.assign({command: 'backups:public-url', hidden: true}, cmd),
+  Object.assign({command: 'backups:publicurl', hidden: true}, cmd)
 ]
