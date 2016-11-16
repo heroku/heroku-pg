@@ -27,7 +27,7 @@ describe('pg:backups:cancel', () => {
       ])
     })
 
-    it('shows URL', () => {
+    it('cancels backup', () => {
       return cmd.run({app: 'myapp', args: {}})
       .then(() => expect(cli.stderr, 'to equal', 'Cancelling b003... done\n'))
     })
@@ -40,7 +40,7 @@ describe('pg:backups:cancel', () => {
       })
     })
 
-    it('shows URL', () => {
+    it('cancels backup', () => {
       return cmd.run({app: 'myapp', args: {backup_id: 'b003'}})
       .then(() => expect(cli.stderr, 'to equal', 'Cancelling b003... done\n'))
     })
