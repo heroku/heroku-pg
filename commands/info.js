@@ -27,7 +27,7 @@ function databaseNameFromUrl (uri, config) {
 function displayDB (db, app) {
   cli.styledHeader(db.configVars.map(c => cli.color.configVar(c)).join(', '))
   if (db.addon.app.name !== app) {
-    db.db.info.push({name: 'App', values: [db.addon.app.name]})
+    db.db.info.push({name: 'Billing App', values: [db.addon.app.name]})
   }
   db.db.info.push({name: 'Add-on', values: [cli.color.addon(db.addon.name)]})
   let info = db.db.info.reduce((info, i) => {

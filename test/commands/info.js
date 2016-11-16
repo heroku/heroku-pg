@@ -79,10 +79,10 @@ describe('pg', () => {
 
       return cmd.run({app: 'myapp', args: {}})
       .then(() => expect(cli.stdout, 'to equal', `=== DATABASE_URL, HEROKU_POSTGRESQL_COBALT_URL
-Plan:      Hobby-dev
-Following: HEROKU_POSTGRESQL_COBALT
-App:       myapp2
-Add-on:    postgres-1
+Plan:        Hobby-dev
+Following:   HEROKU_POSTGRESQL_COBALT
+Billing App: myapp2
+Add-on:      postgres-1
 
 === HEROKU_POSTGRESQL_PURPLE_URL
 Plan:      Hobby-dev
