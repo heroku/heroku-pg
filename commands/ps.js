@@ -13,13 +13,28 @@ function * run (context, heroku) {
 
   let db = yield fetcher.database(app, database)
 
+  let waiting_query = `
+SELECT EXISTS(
+  SELECT 1 FROM information_schema.columns WHERE table_schema = 'pg_catalog'
+    AND table_name = 'pg_stat_activity'
+    AND column_name = 'waiting'
+) AS available
+`
+
+  let waiting_output = yield psql.exec(db, waiting_query)
+  let waiting = 'CASE WHEN wait_event IS NULL THEN false ELSE true END AS waiting'
+
+  if (waiting_output.includes('t')) {
+    waiting = 'waiting'
+  }
+
   let query = `
 SELECT
  pid,
  state,
  application_name AS source,
  age(now(),xact_start) AS running_for,
- waiting,
+ ${waiting},
  query
 FROM pg_stat_activity
 WHERE
