@@ -26,8 +26,8 @@ describe('psql', () => {
         PGPORT: 5432,
         PGHOST: 'localhost'
       })
-      let opts = {env, encoding: 'utf8', stdio: [0, 'pipe', 2]}
-      cp.expects('spawnSync').withExactArgs('psql', ['--command', 'SELECT NOW();'], opts).once().returns({
+      let opts = {env, encoding: 'utf8'}
+      cp.expects('spawn').withExactArgs('psql', ['-c', 'SELECT NOW();'], opts).once().returns({
         stdout: '',
         status: 0
       })
