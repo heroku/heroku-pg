@@ -1,5 +1,7 @@
 'use strict'
 
+/* global describe it */
+
 const sinon = require('sinon')
 const psql = require('../../lib/psql')
 
