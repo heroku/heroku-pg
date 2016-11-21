@@ -38,7 +38,7 @@
   "keywords": [
     "heroku-plugin"
   ],
-  "license": "ISC",
+"license": "ISC",
   "main": "index.js",
   "repository": {
     "type": "git",

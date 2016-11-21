@@ -1,9 +1,7 @@
 'use strict'
 
-const cli = require('heroku-cli-util')
-let expect = require('unexpected')
 const sinon = require('sinon')
-const psql  = require('../../lib/psql')
+const psql = require('../../lib/psql')
 
 const db = {
   user: 'jeff',
@@ -27,8 +25,8 @@ describe('psql', () => {
         PGHOST: 'localhost'
       })
       let opts = {env: env, encoding: 'utf8'}
-      let onHandler = function(key, data) {
-        return Promise.resolve("result")
+      let onHandler = function (key, data) {
+        return Promise.resolve('result')
       }
       cp.expects('spawn').withExactArgs('psql', ['-c', 'SELECT NOW();'], opts).once().returns(
         {
@@ -41,7 +39,7 @@ describe('psql', () => {
           on: onHandler
         }
       )
-      return psql.exec(db, 'SELECT NOW();')
+      return psql.exec(db, 'SELECT NOW();', 1000)
       .then(() => cp.verify())
       .then(() => cp.restore())
     }))
