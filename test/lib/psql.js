@@ -3,8 +3,7 @@
 /* global describe it */
 
 const sinon = require('sinon')
-const psql = require('../../lib/psql')
-
+const Code = require('code')
 const db = {
   user: 'jeff',
   password: 'pass',
@@ -24,6 +23,12 @@ const bastionDb = {
   host: 'localhost',
   hostname: 'localhost'
 }
+
+const proxyquire = require('proxyquire')
+var tunnelStub = sinon.stub().callsArg(1);
+const psql = proxyquire('../../lib/psql', {
+  'tunnel-ssh': tunnelStub
+});
 
 describe('psql', () => {
   describe('exec', () => {
@@ -57,18 +62,20 @@ describe('psql', () => {
       .then(() => cp.verify())
       .then(() => cp.restore())
     }))
-    it('runs psql for bastion databases', sinon.test(() => {
+    it('opens an SSH tunnel and runs psql for bastion databases', sinon.test(() => {
       let cp = sinon.mock(require('child_process'))
-      let env = Object.assign({}, process.env, {
-        PGAPPNAME: 'psql non-interactive',
-        PGSSLMODE: 'prefer',
-        PGUSER: 'jeff',
-        PGPASSWORD: 'pass',
-        PGDATABASE: 'mydb',
-        PGPORT: 5432,
-        PGHOST: 'localhost'
-      })
-      let opts = {env: env, encoding: 'utf8'}
+      sinon.stub(Math, "random", function(){
+        return 0;
+      });
+      let tunnelConf = {
+        username: 'bastion',
+        host: 'bastion-host',
+        privateKey: 'super-private-key',
+        dstHost: 'localhost',
+        dstPort: 5432,
+        localHost: '127.0.0.1',
+        localPort: 49152
+      }
       let onHandler = function (key, data) {
         return Promise.resolve('result')
       }
@@ -84,6 +91,9 @@ describe('psql', () => {
         }
       )
       return psql.exec(bastionDb, 'SELECT NOW();', 1000)
+      .then(() => Code.expect(
+        tunnelStub.withArgs(tunnelConf).calledOnce
+      ).to.be.true())
       .then(() => cp.verify())
       .then(() => cp.restore())
     }))
