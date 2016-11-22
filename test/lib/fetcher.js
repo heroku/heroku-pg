@@ -156,7 +156,7 @@ describe('fetcher', () => {
 
         api.get('/apps/myapp/addon-attachments').reply(200, attachments)
 
-        return fetcher(new Heroku()).database('myapp', 'DATABASE_URL')
+        return fetcher(new Heroku()).database('myapp')
         .then((db) => expect(db, 'to equal', {
           user: 'pguser',
           password: 'pgpass',
