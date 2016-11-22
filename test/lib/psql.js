@@ -58,7 +58,7 @@ describe('psql', () => {
           on: onHandler
         }
       )
-      return psql.exec(db, 'SELECT NOW();', 1000)
+      return psql.exec(db, 'SELECT NOW();', 1000).catch((timeout) => {})
       .then(() => cp.verify())
       .then(() => cp.restore())
     }))
@@ -90,7 +90,7 @@ describe('psql', () => {
           on: onHandler
         }
       )
-      return psql.exec(bastionDb, 'SELECT NOW();', 1000)
+      return psql.exec(bastionDb, 'SELECT NOW();', 1000).catch((timeout) => {})
       .then(() => Code.expect(
         tunnelStub.withArgs(tunnelConf).calledOnce
       ).to.be.true())
