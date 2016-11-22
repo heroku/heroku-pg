@@ -43,16 +43,13 @@ describe('psql', () => {
         PGPORT: 5432,
         PGHOST: 'localhost'
       })
-      let opts = {env: env, encoding: 'utf8'}
+      let opts = {env: env, encoding: 'utf8', stdio: [ 'ignore', 'pipe', 'inherit' ]}
       let onHandler = function (key, data) {
         return Promise.resolve('result')
       }
       cp.expects('spawn').withExactArgs('psql', ['-c', 'SELECT NOW();'], opts).once().returns(
         {
           stdout: {
-            on: onHandler
-          },
-          stderr: {
             on: onHandler
           },
           on: onHandler
@@ -82,9 +79,6 @@ describe('psql', () => {
       cp.expects('spawn').withArgs('psql', ['-c', 'SELECT NOW();']).once().returns(
         {
           stdout: {
-            on: onHandler
-          },
-          stderr: {
             on: onHandler
           },
           on: onHandler
