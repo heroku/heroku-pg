@@ -25,10 +25,10 @@ const bastionDb = {
 }
 
 const proxyquire = require('proxyquire')
-var tunnelStub = sinon.stub().callsArg(1);
+var tunnelStub = sinon.stub().callsArg(1)
 const psql = proxyquire('../../lib/psql', {
   'tunnel-ssh': tunnelStub
-});
+})
 
 describe('psql', () => {
   describe('exec', () => {
@@ -64,9 +64,9 @@ describe('psql', () => {
     }))
     it('opens an SSH tunnel and runs psql for bastion databases', sinon.test(() => {
       let cp = sinon.mock(require('child_process'))
-      sinon.stub(Math, "random", function(){
-        return 0;
-      });
+      sinon.stub(Math, 'random', function () {
+        return 0
+      })
       let tunnelConf = {
         username: 'bastion',
         host: 'bastion-host',
