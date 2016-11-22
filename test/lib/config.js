@@ -13,7 +13,7 @@ describe('config', () => {
     api = nock('https://api.heroku.com:443')
     nock.cleanAll()
 
-    getConfig.cache.clear()
+    getConfig.clear()
   })
 
   afterEach(() => {

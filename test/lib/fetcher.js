@@ -12,7 +12,7 @@ const url = require('url')
 
 beforeEach(function () {
   const getConfig = require('../../lib/config')
-  getConfig.cache.clear()
+  getConfig.clear()
 })
 
 describe('fetcher', () => {
