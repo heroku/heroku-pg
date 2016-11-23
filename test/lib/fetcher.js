@@ -240,13 +240,55 @@ describe('fetcher', () => {
         }))
       })
 
+      it('throws not found if not neither set', () => {
+        const err = new Error()
+        err.statusCode = 404
+        err.body = {id: 'not_found'}
+
+        stub.withArgs(sinon.match.any, 'myapp', 'FOOBAR_URL').returns(Promise.reject(err))
+
+        api.get('/apps/myapp/config-vars').reply(200, {
+          'DATABASE_URL': 'postgres://pguser:pgpass@pghost.com/pgdb'
+        })
+
+        let plan = {name: 'heroku-postgresql:hobby-dev'}
+        let attachments = [
+          {
+            app: {name: 'myapp'},
+            addon: {id: 100, name: 'postgres-1', plan},
+            config_vars: ['HEROKU_POSTGRESQL_PINK_URL']
+          }
+        ]
+
+        api.get('/apps/myapp/addon-attachments').reply(200, attachments)
+
+        return expect(fetcher(new Heroku()).database('myapp', 'FOOBAR_URL'), 'to be rejected with', /Unknown database: FOOBAR_URL. Valid options are: HEROKU_POSTGRESQL_PINK_URL/)
+      })
+
       it('throws not found if mismatch', () => {
         const err = new Error()
         err.statusCode = 404
+        err.body = {id: 'not_found'}
 
-        stub.withArgs(sinon.match.any, 'myapp', 'FOOBAR_URL').throws(err)
+        stub.withArgs(sinon.match.any, 'myapp', 'FOOBAR_URL').returns(Promise.reject(err))
 
-        return expect(fetcher(new Heroku()).database('myapp', 'FOOBAR_URL'), 'to be rejected with', err)
+        api.get('/apps/myapp/config-vars').reply(200, {
+          'FOOBAR_URL': 'postgres://pguser:pgpass@pghost.com/pgdb1',
+          'DATABASE_URL': 'postgres://pguser:pgpass@pghost.com/pgdb2'
+        })
+
+        let plan = {name: 'heroku-postgresql:hobby-dev'}
+        let attachments = [
+          {
+            app: {name: 'myapp'},
+            addon: {id: 100, name: 'postgres-1', plan},
+            config_vars: ['DATABASE_URL']
+          }
+        ]
+
+        api.get('/apps/myapp/addon-attachments').reply(200, attachments)
+
+        return expect(fetcher(new Heroku()).database('myapp', 'FOOBAR_URL'), 'to be rejected with', /Unknown database: FOOBAR_URL. Valid options are: DATABASE_URL/)
       })
     })
 
