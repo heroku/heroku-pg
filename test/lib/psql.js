@@ -3,7 +3,7 @@
 /* global describe it */
 
 const sinon = require('sinon')
-const Code = require('code')
+const expect = require('unexpected')
 const db = {
   user: 'jeff',
   password: 'pass',
@@ -85,9 +85,8 @@ describe('psql', () => {
         }
       )
       return psql.exec(bastionDb, 'SELECT NOW();', 1000).catch((timeout) => {})
-      .then(() => Code.expect(
-        tunnelStub.withArgs(tunnelConf).calledOnce
-      ).to.be.true())
+      .then(() => expect(
+        tunnelStub.withArgs(tunnelConf).calledOnce, 'to equal', true))
       .then(() => cp.verify())
       .then(() => cp.restore())
     }))
