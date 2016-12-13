@@ -114,5 +114,13 @@ module.exports = {
   needsApp: true,
   needsAuth: true,
   variableArgs: true,
+  flags: [
+    // for backwards compatibility with `pg:backups command` invocation
+    {name: 'verbose', char: 'v',                 hidden: true},
+    {name: 'confirm', char: 'c', hasValue: true, hidden: true},
+    {name: 'output',  char: 'o', hasValue: true, hidden: true},
+    {name: 'wait-interval',      hasValue: true, hidden: true},
+    {name: 'at',                 hasValue: true, hidden: true}
+  ],
   run: cli.command({preauth: true}, co.wrap(run))
 }
