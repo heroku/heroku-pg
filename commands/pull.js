@@ -5,6 +5,7 @@ const co = require('co')
 const debug = require('debug')('push')
 const psql = require('../lib/psql')
 const env = require('process').env
+const bastion = require('../lib/bastion')
 
 function parseURL (db) {
   const url = require('url')
@@ -69,11 +70,37 @@ and retry.`)
   }
 })
 
+const maybeTunnel = function * (herokuDb) {
+  const configs = bastion.getConfigs(herokuDb)
+  const tunnel = yield bastion.sshTunnel(herokuDb, configs.dbTunnelConfig)
+  if (tunnel) {
+    const tunnelHost = {
+      host: 'localhost',
+      port: configs.dbTunnelConfig.localPort
+    }
+
+    herokuDb = Object.assign(herokuDb, tunnelHost)
+  }
+  return herokuDb
+}
+
 const run = co.wrap(function * (source, target) {
   yield prepare(target)
+
   let password = p => p ? ` PGPASSWORD="${p}"` : ''
   let dump = `env${password(source.password)} PGSSLMODE=prefer pg_dump --verbose -F c -Z 0 ${connstring(source, true)}`
   let restore = `env${password(target.password)} pg_restore --verbose --no-acl --no-owner ${connstring(target)}`
+
+  // stuck here, take the output of this console.log
+  // and paste it in another windows and you can see it work
+  // but when run through exec it fails
+
+  // uncomment these lines to play around
+
+  // const wait = require('co-wait')
+  // console.log(dump)
+  // yield wait(100000)
+
   exec(`${dump} | ${restore}`)
   yield verifyExtensionsMatch(source, target)
 })
@@ -81,8 +108,12 @@ const run = co.wrap(function * (source, target) {
 function * push (context, heroku) {
   const fetcher = require('../lib/fetcher')(heroku)
   const {app, args} = context
+
   const source = parseURL(args.source)
-  const target = yield fetcher.database(app, args.target)
+
+  const db = yield fetcher.database(app, args.target)
+  const target = yield maybeTunnel(db)
+
   cli.log(`heroku-cli: Pushing ${cli.color.cyan(args.source)} ---> ${cli.color.addon(target.attachment.addon.name)}`)
   yield run(source, target)
   cli.log('heroku-cli: Pushing complete.')
@@ -91,8 +122,12 @@ function * push (context, heroku) {
 function * pull (context, heroku) {
   const fetcher = require('../lib/fetcher')(heroku)
   const {app, args} = context
-  const source = yield fetcher.database(app, args.source)
+
+  const db = yield fetcher.database(app, args.source)
+  const source = yield maybeTunnel(db)
+
   const target = parseURL(args.target)
+
   cli.log(`heroku-cli: Pulling ${cli.color.addon(source.attachment.addon.name)} ---> ${cli.color.cyan(args.target)}`)
   yield run(source, target)
   cli.log('heroku-cli: Pulling complete.')
