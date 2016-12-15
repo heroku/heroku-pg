@@ -18,7 +18,7 @@ const shouldSchedule = function (cmdRun) {
           plan: {name: 'heroku-postgresql:standard-0'}
         },
         config_vars: [
-          "DATABASE_URL"
+          'DATABASE_URL'
         ]
       }
     ])
