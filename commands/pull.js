@@ -31,6 +31,20 @@ function exec (cmd, opts = {}) {
   }
 }
 
+function spawn (cmd) {
+  const {spawn} = require('child_process')
+  return new Promise((resolve, reject) => {
+    let result = ''
+    let psql = spawn(cmd, [], {encoding: 'utf8', stdio: [ 'ignore', 'pipe', 'inherit' ], shell: true})
+    psql.stdout.on('data', function (data) {
+      result += data.toString()
+    })
+    psql.on('close', function (code) {
+      resolve(result)
+    })
+  })
+}
+
 const prepare = co.wrap(function * (target) {
   if (target.host === 'localhost') {
     exec(`createdb ${connstring(target, true)}`)
@@ -71,12 +85,16 @@ and retry.`)
 })
 
 const maybeTunnel = function * (herokuDb) {
+  // TODO defend against side effects, should find altering code & fix
+  herokuDb = Object.assign({}, herokuDb)
+
   const configs = bastion.getConfigs(herokuDb)
   const tunnel = yield bastion.sshTunnel(herokuDb, configs.dbTunnelConfig)
   if (tunnel) {
     const tunnelHost = {
       host: 'localhost',
-      port: configs.dbTunnelConfig.localPort
+      port: configs.dbTunnelConfig.localPort,
+      _tunnel: tunnel
     }
 
     herokuDb = Object.assign(herokuDb, tunnelHost)
@@ -84,25 +102,22 @@ const maybeTunnel = function * (herokuDb) {
   return herokuDb
 }
 
-const run = co.wrap(function * (source, target) {
-  yield prepare(target)
+const run = co.wrap(function * (sourceIn, targetIn) {
+  yield prepare(targetIn)
+
+  const source = yield maybeTunnel(sourceIn)
+  const target = yield maybeTunnel(targetIn)
 
   let password = p => p ? ` PGPASSWORD="${p}"` : ''
   let dump = `env${password(source.password)} PGSSLMODE=prefer pg_dump --verbose -F c -Z 0 ${connstring(source, true)}`
   let restore = `env${password(target.password)} pg_restore --verbose --no-acl --no-owner ${connstring(target)}`
 
-  // stuck here, take the output of this console.log
-  // and paste it in another windows and you can see it work
-  // but when run through exec it fails
+  yield spawn(`${dump} | ${restore}`)
 
-  // uncomment these lines to play around
+  if (source._tunnel) source._tunnel.close()
+  if (target._tunnel) target._tunnel.close()
 
-  // const wait = require('co-wait')
-  // console.log(dump)
-  // yield wait(100000)
-
-  exec(`${dump} | ${restore}`)
-  yield verifyExtensionsMatch(source, target)
+  yield verifyExtensionsMatch(sourceIn, targetIn)
 })
 
 function * push (context, heroku) {
@@ -110,9 +125,7 @@ function * push (context, heroku) {
   const {app, args} = context
 
   const source = parseURL(args.source)
-
-  const db = yield fetcher.database(app, args.target)
-  const target = yield maybeTunnel(db)
+  const target = yield fetcher.database(app, args.target)
 
   cli.log(`heroku-cli: Pushing ${cli.color.cyan(args.source)} ---> ${cli.color.addon(target.attachment.addon.name)}`)
   yield run(source, target)
@@ -123,9 +136,7 @@ function * pull (context, heroku) {
   const fetcher = require('../lib/fetcher')(heroku)
   const {app, args} = context
 
-  const db = yield fetcher.database(app, args.source)
-  const source = yield maybeTunnel(db)
-
+  const source = yield fetcher.database(app, args.source)
   const target = parseURL(args.target)
 
   cli.log(`heroku-cli: Pulling ${cli.color.addon(source.attachment.addon.name)} ---> ${cli.color.cyan(args.target)}`)

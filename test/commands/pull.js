@@ -19,6 +19,16 @@ let bastion
 let push
 let pull
 
+let opts = { encoding: 'utf8', shell: true, stdio: ['ignore', 'pipe', 'inherit'] }
+
+let stdoutHandler = function (key, func) {
+  func('result')
+}
+
+let exitHandler = function (key, func) {
+  func(0)
+}
+
 describe('pg', () => {
   beforeEach(() => {
     cli.mockConsole()
@@ -71,8 +81,18 @@ describe('pg', () => {
     it('pushes out a db', sinon.test(() => {
       let psql = require('../../lib/psql')
       sinon.stub(psql, 'exec').returns(Promise.resolve(' empty \n-------\n t'))
+
       let cp = sinon.mock(require('child_process'))
-      cp.expects('execSync').withExactArgs('env PGSSLMODE=prefer pg_dump --verbose -F c -Z 0  -h localhost -p 5432  localdb | env PGPASSWORD="pass" pg_restore --verbose --no-acl --no-owner -U jeff -h herokai.com -p 5432 -d mydb', {stdio: 'inherit'}).once()
+      let cmd = 'env PGSSLMODE=prefer pg_dump --verbose -F c -Z 0  -h localhost -p 5432  localdb | env PGPASSWORD="pass" pg_restore --verbose --no-acl --no-owner -U jeff -h herokai.com -p 5432 -d mydb'
+      cp.expects('spawn').withExactArgs(cmd, [], opts).once().returns(
+        {
+          stdout: {
+            on: stdoutHandler
+          },
+          on: exitHandler
+        }
+      )
+
       return push.run({args: {source: 'localdb', target: 'postgres-1'}})
       .then(() => cp.verify())
       .then(() => expect(cli.stdout, 'to equal', 'heroku-cli: Pushing localdb ---> postgres-1\nheroku-cli: Pushing complete.\n'))
@@ -84,7 +104,17 @@ describe('pg', () => {
       let psql = require('../../lib/psql')
       sinon.stub(psql, 'exec').returns(Promise.resolve(' empty \n-------\n t'))
       let cp = sinon.mock(require('child_process'))
-      cp.expects('execSync').withExactArgs('env PGSSLMODE=prefer pg_dump --verbose -F c -Z 0  -h localhost -p 5433  localdb | env PGPASSWORD="pass" pg_restore --verbose --no-acl --no-owner -U jeff -h herokai.com -p 5432 -d mydb', {stdio: 'inherit'}).once()
+      let cmd = 'env PGSSLMODE=prefer pg_dump --verbose -F c -Z 0  -h localhost -p 5433  localdb | env PGPASSWORD="pass" pg_restore --verbose --no-acl --no-owner -U jeff -h herokai.com -p 5432 -d mydb'
+
+      cp.expects('spawn').withExactArgs(cmd, [], opts).once().returns(
+        {
+          stdout: {
+            on: stdoutHandler
+          },
+          on: exitHandler
+        }
+      )
+
       return push.run({args: {source: 'postgres://localhost:5433/localdb', target: 'postgres-1'}})
       .then(() => cp.verify())
       .then(() => expect(cli.stdout, 'to equal', 'heroku-cli: Pushing postgres://localhost:5433/localdb ---> postgres-1\nheroku-cli: Pushing complete.\n'))
@@ -98,7 +128,17 @@ describe('pg', () => {
       let psql = require('../../lib/psql')
       sinon.stub(psql, 'exec').returns(Promise.resolve(' empty \n-------\n t'))
       let cp = sinon.mock(require('child_process'))
-      cp.expects('execSync').withExactArgs('env PGSSLMODE=prefer pg_dump --verbose -F c -Z 0  -h localhost -p 5433  localdb | env PGPASSWORD="pass" pg_restore --verbose --no-acl --no-owner -U jeff -h herokai.com -p 5432 -d mydb', {stdio: 'inherit'}).once()
+
+      let cmd = 'env PGSSLMODE=prefer pg_dump --verbose -F c -Z 0  -h localhost -p 5433  localdb | env PGPASSWORD="pass" pg_restore --verbose --no-acl --no-owner -U jeff -h herokai.com -p 5432 -d mydb'
+      cp.expects('spawn').withExactArgs(cmd, [], opts).once().returns(
+        {
+          stdout: {
+            on: stdoutHandler
+          },
+          on: exitHandler
+        }
+      )
+
       return push.run({args: {source: 'localdb', target: 'postgres-1'}})
       .then(() => cp.verify())
       .then(() => expect(cli.stdout, 'to equal', 'heroku-cli: Pushing localdb ---> postgres-1\nheroku-cli: Pushing complete.\n'))
@@ -123,7 +163,16 @@ describe('pg', () => {
       let psql = require('../../lib/psql')
       sinon.stub(psql, 'exec').returns(Promise.resolve(' empty \n-------\n t'))
       let cp = sinon.mock(require('child_process'))
-      cp.expects('execSync').withExactArgs('env PGSSLMODE=prefer pg_dump --verbose -F c -Z 0  -h localhost -p 5432  localdb | env PGPASSWORD="pass" pg_restore --verbose --no-acl --no-owner -U jeff -h herokai.com -p 5432 -d mydb', {stdio: 'inherit'}).once()
+      let cmd = 'env PGSSLMODE=prefer pg_dump --verbose -F c -Z 0  -h localhost -p 5432  localdb | env PGPASSWORD="pass" pg_restore --verbose --no-acl --no-owner -U jeff -h herokai.com -p 5432 -d mydb'
+      cp.expects('spawn').withExactArgs(cmd, [], opts).once().returns(
+        {
+          stdout: {
+            on: stdoutHandler
+          },
+          on: exitHandler
+        }
+      )
+
       return push.run({args: {source: 'localdb', target: 'postgres-1'}})
       .then(() => cp.verify())
       .then(() => expect(cli.stdout, 'to equal', 'heroku-cli: Pushing localdb ---> postgres-1\nheroku-cli: Pushing complete.\n'))
@@ -141,7 +190,17 @@ describe('pg', () => {
       sinon.stub(psql, 'exec')
       let cp = sinon.mock(require('child_process'))
       cp.expects('execSync').withExactArgs('createdb  -h localhost -p 5432  localdb', {stdio: 'inherit'}).once()
-      cp.expects('execSync').withExactArgs('env PGPASSWORD="pass" PGSSLMODE=prefer pg_dump --verbose -F c -Z 0 -U jeff -h herokai.com -p 5432  mydb | env pg_restore --verbose --no-acl --no-owner  -h localhost -p 5432 -d localdb', {stdio: 'inherit'}).once()
+
+      let cmd = 'env PGPASSWORD="pass" PGSSLMODE=prefer pg_dump --verbose -F c -Z 0 -U jeff -h herokai.com -p 5432  mydb | env pg_restore --verbose --no-acl --no-owner  -h localhost -p 5432 -d localdb'
+      cp.expects('spawn').withExactArgs(cmd, [], opts).once().returns(
+        {
+          stdout: {
+            on: stdoutHandler
+          },
+          on: exitHandler
+        }
+      )
+
       return pull.run({args: {source: 'postgres-1', target: 'localdb'}})
       .then(() => cp.verify())
       .then(() => expect(cli.stdout, 'to equal', 'heroku-cli: Pulling postgres-1 ---> localdb\nheroku-cli: Pulling complete.\n'))
@@ -167,7 +226,17 @@ describe('pg', () => {
       sinon.stub(psql, 'exec')
       let cp = sinon.mock(require('child_process'))
       cp.expects('execSync').withExactArgs('createdb  -h localhost -p 5432  localdb', {stdio: 'inherit'}).once()
-      cp.expects('execSync').withExactArgs('env PGPASSWORD="pass" PGSSLMODE=prefer pg_dump --verbose -F c -Z 0 -U jeff -h herokai.com -p 5432  mydb | env pg_restore --verbose --no-acl --no-owner  -h localhost -p 5432 -d localdb', {stdio: 'inherit'}).once()
+
+      let cmd = 'env PGPASSWORD="pass" PGSSLMODE=prefer pg_dump --verbose -F c -Z 0 -U jeff -h herokai.com -p 5432  mydb | env pg_restore --verbose --no-acl --no-owner  -h localhost -p 5432 -d localdb'
+      cp.expects('spawn').withExactArgs(cmd, [], opts).once().returns(
+        {
+          stdout: {
+            on: stdoutHandler
+          },
+          on: exitHandler
+        }
+      )
+
       return pull.run({args: {source: 'postgres-1', target: 'localdb'}})
       .then(() => cp.verify())
       .then(() => expect(cli.stdout, 'to equal', 'heroku-cli: Pulling postgres-1 ---> localdb\nheroku-cli: Pulling complete.\n'))
