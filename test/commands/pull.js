@@ -32,6 +32,7 @@ let exitHandler = function (key, func) {
 describe('pg', () => {
   beforeEach(() => {
     cli.mockConsole()
+    cli.exit.mock()
 
     db = {
       user: 'jeff',
@@ -180,6 +181,30 @@ describe('pg', () => {
       .then(() => expect(
         tunnelStub.withArgs(tunnelConf).calledOnce, 'to equal', true)
       )
+      .then(() => psql.exec.restore())
+    }))
+
+    it('exits non-zero when there is an error', sinon.test(() => {
+      let psql = require('../../lib/psql')
+      sinon.stub(psql, 'exec').returns(Promise.resolve(' empty \n-------\n t'))
+
+      let cp = sinon.mock(require('child_process'))
+      let cmd = 'env PGSSLMODE=prefer pg_dump --verbose -F c -Z 0  -h localhost -p 5432  localdb | env PGPASSWORD="pass" pg_restore --verbose --no-acl --no-owner -U jeff -h herokai.com -p 5432 -d mydb'
+      cp.expects('spawn').withExactArgs(cmd, [], opts).once().returns(
+        {
+          stdout: {
+            on: stdoutHandler
+          },
+          on: function (key, func) {
+            func(1)
+          }
+        }
+      )
+
+      return expect(push.run({args: {source: 'localdb', target: 'postgres-1'}}), 'to be rejected with', {code: 1})
+      .then(() => cp.verify())
+      .then(() => expect(cli.stdout, 'to equal', 'heroku-cli: Pushing localdb ---> postgres-1\n'))
+      .then(() => expect(cli.stderr, 'to equal', ''))
       .then(() => psql.exec.restore())
     }))
   })

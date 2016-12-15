@@ -40,7 +40,11 @@ function spawn (cmd) {
       result += data.toString()
     })
     psql.on('close', function (code) {
-      resolve(result)
+      if (code === 0) {
+        resolve(result)
+      } else {
+        cli.exit(code)
+      }
     })
   })
 }
