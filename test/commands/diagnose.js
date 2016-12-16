@@ -59,6 +59,11 @@ describe('pg:diagnose', () => {
           name: 'Connection count',
           status: 'red',
           results: [{count: 1}]
+        },
+        {
+          name: 'Load',
+          status: 'red',
+          results: {load: 100}
         }
       ]
     })
@@ -70,6 +75,8 @@ RED: Connection count
 count
 ─────
 1
+RED: Load
+load 100
 `))
   })
 
@@ -84,6 +91,11 @@ count
           name: 'Connection count',
           status: 'red',
           results: [{count: 1}]
+        },
+        {
+          name: 'Load',
+          status: 'red',
+          results: {load: 100}
         }
       ]
     })
@@ -95,6 +107,8 @@ RED: Connection count
 count
 ─────
 1
+RED: Load
+load 100
 `))
   })
 })

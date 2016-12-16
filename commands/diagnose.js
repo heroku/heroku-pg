@@ -37,14 +37,15 @@ available for one month after creation on ${report.created_at}
       for (let check of checks) {
         cli.log(cli.color[check.status](`${check.status.toUpperCase()}: ${check.name}`))
         if (check.status === 'green') continue
-        if (!check.results || !check.results.length) return
-        if (Array.isArray(check.results[0])) {
-          cli.log(`  ${check.results[0].join(' ')}`)
-        } else {
+        if (!check.results) return
+        if (Array.isArray(check.results)) {
           let keys = Object.keys(check.results[0])
           cli.table(check.results, {
             columns: keys.map(key => ({key}))
           })
+        } else {
+          let key = Object.keys(check.results)[0]
+          cli.log(`${key} ${check.results[key]}`)
         }
       }
     }
