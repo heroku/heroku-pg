@@ -11,16 +11,12 @@ function * run (context, heroku) {
 
   let db = yield fetcher.addon(app, args.database)
 
-  if (flags.name) {
-    let data = {
-      name: flags.name
-    }
-    yield cli.action(`Creating credential ${cli.color.cmd(flags.name)}`, co(function * () {
-      yield heroku.post(`/postgres/v0/databases/${db.name}/credentials`, {host: host(db), body: data})
-    }))
-  } else {
-    throw new Error(`Error: Please specify a name for the new credential.`)
+  let data = {
+    name: flags.name
   }
+  yield cli.action(`Creating credential ${cli.color.cmd(flags.name)}`, co(function * () {
+    yield heroku.post(`/postgres/v0/databases/${db.name}/credentials`, {host: host(db), body: data})
+  }))
 }
 
 module.exports = {
@@ -30,10 +26,10 @@ module.exports = {
   needsApp: true,
   needsAuth: true,
   help: `
-Example Usage: 
+Example Usage:
   heroku pg:credentials:create postgresql-something-12345 --name new_role_name
 `,
   args: [{name: 'database', optional: true}],
-  flags: [{name: 'name', hasValue: true, description: "name of the new credential within the database"}],
+  flags: [{name: 'name', hasValue: true, required: true, description: "name of the new credential within the database"}],
   run: cli.command({preauth: true}, co.wrap(run))
 }
