@@ -46,7 +46,7 @@ describe('pg:credentials:destroy', () => {
 
   it('destroys the credential', () => {
     pg.delete('/postgres/v0/databases/postgres-1/credentials/credname').reply(200)
-    return cmd.run({app: 'myapp', args: {}, flags: {name: "credname", confirm: 'myapp'}})
+    return cmd.run({app: 'myapp', args: {}, flags: {name: 'credname', confirm: 'myapp'}})
     .then(() => expect(cli.stderr, 'to equal', 'Destroying credential credname... done\n'))
     .then(() => expect(cli.stdout, 'to equal', `The credential has been destroyed within postgres-1 and detached from all apps.
 Database objects owned by credname will be assigned to the default credential

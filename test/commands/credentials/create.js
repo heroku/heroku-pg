@@ -46,7 +46,7 @@ describe('pg:credentials:create', () => {
 
   it('creates the credential', () => {
     pg.post('/postgres/v0/databases/postgres-1/credentials').reply(200)
-    return cmd.run({app: 'myapp', args: {}, flags: {name: "credname"}})
+    return cmd.run({app: 'myapp', args: {}, flags: {name: 'credname'}})
     .then(() => expect(cli.stdout, 'to equal', ''))
     .then(() => expect(cli.stderr, 'to equal', 'Creating credential credname... done\n'))
   })
