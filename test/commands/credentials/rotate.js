@@ -38,6 +38,7 @@ describe('pg:credentials:rotate', () => {
     api = nock('https://api.heroku.com')
     pg = nock('https://postgres-api.heroku.com')
     cli.mockConsole()
+    cli.exit.mock()
   })
 
   afterEach(() => {
@@ -59,5 +60,12 @@ describe('pg:credentials:rotate', () => {
               .then(() => expect(cli.stderr, 'to equal', 'Rotating all credentials on postgres-1... done\n'))
   })
 
-  it('fails with an error if both --all and --name are included')
+  it('fails with an error if both --all and --name are included', () => {
+    return cmd.run({app: 'myapp', args: {}, flags: {all: true, name: 'my_role', confirm: 'myapp'}})
+              .then(() => { throw new Error('expected error') })
+              .catch((err) => {
+                expect(err.message, 'to equal', 'cannot pass both --all and --name')
+                expect(err.code, 'to equal', 1)
+              })
+  })
 })
