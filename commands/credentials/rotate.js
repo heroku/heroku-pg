@@ -18,7 +18,10 @@ function * run (context, heroku) {
   yield cli.confirmApp(app, flags.confirm, `WARNING: Destructive action`)
 
   if (all) {
-    // TODO: is there a bulk rotation endpoint?
+    yield cli.action(`Rotating all credentials on ${cli.color.addon(db.name)}`, co(function * () {
+      yield heroku.post(`/postgres/v0/databases/${db.name}/credentials_rotation`,
+                        { host: host(db) })
+    }))
   } else {
     yield cli.action(`Rotating ${cred} on ${cli.color.addon(db.name)}`, co(function * () {
       yield heroku.post(`/postgres/v0/databases/${db.name}/credentials/${cred}/credentials_rotation`,
@@ -35,7 +38,8 @@ module.exports = {
   needsAuth: true,
   flags: [
     {name: 'name', description: 'which credentials to rotate (default credentials if not specified)'},
-    {name: 'all', description: 'rotate all credentials'}
+    {name: 'all', description: 'rotate all credentials', hasValue: false},
+    {name: 'confirm', char: 'c', hasValue: false}
   ],
   args: [{name: 'database', optional: true}],
   run: cli.command({preauth: true}, co.wrap(run))

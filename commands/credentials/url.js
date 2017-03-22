@@ -17,17 +17,17 @@ function * run (context, heroku) {
 
   let roleCreds = roleInfo.credentials.find((c) => c.user === cred && c.state === 'active')
   if (!roleCreds) {
-    cli.exit(1, `could not find any active credentialss for ${cred}`)
+    cli.exit(1, `could not find any active credentials for ${cred}`)
   }
 
-  let creds = Object.assign({ port: 5432 }, db, {
+  let creds = Object.assign({}, db, {
     database: roleInfo.database,
-    host: roleInfo.host
+    host: roleInfo.host,
+    port: roleInfo.port
   }, {
     user: roleCreds.user,
     password: roleCreds.password
-  },
-  )
+  })
 
   let connUrl = url.format({
     pathname: `/${creds.database}`,
@@ -36,7 +36,6 @@ function * run (context, heroku) {
     protocol: 'postgres:',
     slashes: true
   })
-  console.log('got here')
   cli.log(`Connection info string:
    "dbname=${creds.database} host=${creds.host} port=${creds.port} user=${creds.user} password=${creds.password} sslmode=require"
 Connection URL:

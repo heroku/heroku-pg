@@ -52,6 +52,12 @@ describe('pg:credentials:rotate', () => {
               .then(() => expect(cli.stderr, 'to equal', 'Rotating my_role on postgres-1... done\n'))
   })
 
-  it('rotates credentials for all roles with --all')
+  it('rotates credentials for all roles with --all', () => {
+    pg.post('/postgres/v0/databases/postgres-1/credentials_rotation').reply(200)
+    return cmd.run({app: 'myapp', args: {}, flags: {all: true, confirm: 'myapp'}})
+              .then(() => expect(cli.stdout, 'to equal', ''))
+              .then(() => expect(cli.stderr, 'to equal', 'Rotating all credentials on postgres-1... done\n'))
+  })
+
   it('fails with an error if both --all and --name are included')
 })

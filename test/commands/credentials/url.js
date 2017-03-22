@@ -51,6 +51,7 @@ describe('pg:credentials:url', () => {
       state: 'created',
       database: 'd123',
       host: 'localhost',
+      port: 5442,
       credentials: [
         {
           user: 'jeff-rotating',
@@ -68,9 +69,9 @@ describe('pg:credentials:url', () => {
 
     return cmd.run({app: 'myapp', args: {}, flags: {name: 'jeff'}})
     .then(() => expect(cli.stdout, 'to equal', `Connection info string:
-   "dbname=d123 host=localhost port=5432 user=jeff password=hunter2 sslmode=require"
+   "dbname=d123 host=localhost port=5442 user=jeff password=hunter2 sslmode=require"
 Connection URL:
-   postgres://jeff:hunter2@localhost:5432/d123
+   postgres://jeff:hunter2@localhost:5442/d123
 `))
   })
 })
