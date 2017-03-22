@@ -12,7 +12,7 @@ function * run (context, heroku) {
   let db = yield fetcher.addon(app, args.database)
 
   yield cli.action(`Resetting permissions for default role to factory settings`, co(function * () {
-    yield heroku.post(`/postgres/v0/databases/${db.name}/credentials/repair-default`, {host: host(db)})
+    yield heroku.post(`/postgres/v0/databases/${db.name}/repair-default`, {host: host(db)})
   }))
 }
 

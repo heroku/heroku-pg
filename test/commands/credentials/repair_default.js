@@ -45,7 +45,7 @@ describe('pg:credentials:repair-default', () => {
   })
 
   it('resets the credential permissions', () => {
-    pg.post('/postgres/v0/databases/postgres-1/credentials/repair-default').reply(200)
+    pg.post('/postgres/v0/databases/postgres-1/repair-default').reply(200)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
     .then(() => expect(cli.stdout, 'to equal', ''))
     .then(() => expect(cli.stderr, 'to equal', 'Resetting permissions for default role to factory settings... done\n'))
