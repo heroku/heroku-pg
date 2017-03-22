@@ -83,11 +83,13 @@ Plan:        Hobby-dev
 Following:   HEROKU_POSTGRESQL_COBALT
 Billing App: myapp2
 Add-on:      postgres-1
+Credentials: 2
 
 === HEROKU_POSTGRESQL_PURPLE_URL
-Plan:      Hobby-dev
-Following: ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
-Add-on:    postgres-2
+Plan:        Hobby-dev
+Following:   ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
+Add-on:      postgres-2
+Credentials: 2
 
 `))
       .then(() => expect(cli.stderr, 'to equal', ''))
@@ -128,9 +130,10 @@ Add-on:    postgres-2
       .reply(200, dbB)
       return cmd.run({app: 'myapp', args: {database: 'postgres-2'}})
       .then(() => expect(cli.stdout, 'to equal', `=== HEROKU_POSTGRESQL_PURPLE_URL
-Plan:      Hobby-dev
-Following: ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
-Add-on:    postgres-2
+Plan:        Hobby-dev
+Following:   ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
+Add-on:      postgres-2
+Credentials: 2
 
 `))
       .then(() => expect(cli.stderr, 'to equal', ''))
@@ -146,9 +149,10 @@ Add-on:    postgres-2
 
       return cmd.run({app: 'myapp', args: {}})
       .then(() => expect(cli.stdout, 'to equal', `=== HEROKU_POSTGRESQL_PURPLE_URL
-Plan:      Hobby-dev
-Following: ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
-Add-on:    postgres-2
+Plan:        Hobby-dev
+Following:   ec2-55-111-111-1.compute-1.amazonaws.com:5432/dxxxxxxxxxxxx
+Add-on:      postgres-2
+Credentials: 2
 
 `))
       .then(() => expect(cli.stderr, 'to equal', ` ▸    postgres-1 is not yet provisioned.

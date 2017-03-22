@@ -15,6 +15,16 @@ function displayDB (db, app) {
     db.db.info.push({name: 'Billing App', values: [cli.color.cyan(db.addon.app.name)]})
   }
   db.db.info.push({name: 'Add-on', values: [cli.color.addon(db.addon.name)]})
+
+  /* temporary hack for credentials user testing */
+  let connCountIdx = db.db.info.findIndex((item) => item.name === 'Connections')
+  if (connCountIdx < 0) {
+    connCountIdx = db.db.info.length - 1
+  }
+  const credCountIdx = connCountIdx + 1
+  db.db.info.splice(credCountIdx, 0, { name: 'Credentials', values: [ 2 ] })
+  /* end temporary hack for credentials user testing */
+
   let info = db.db.info.reduce((info, i) => {
     if (i.values.length > 0) {
       if (i.resolve_db_name) {
