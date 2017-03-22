@@ -27,11 +27,11 @@ const fetcher = () => {
   }
 }
 
-const cmd = proxyquire('../../commands/credentials', {
-  '../lib/fetcher': fetcher
+const cmd = proxyquire('../../../commands/credentials/rotate', {
+  '../../lib/fetcher': fetcher
 })
 
-describe('pg:credentials', () => {
+describe('pg:credentials:rotate', () => {
   let api, pg
 
   beforeEach(() => {
@@ -45,19 +45,13 @@ describe('pg:credentials', () => {
     api.done()
   })
 
-  it('runs query', () => {
-    return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stdout, 'to equal', `Connection info string:
-   "dbname=mydb host=foo.com port=5432 user=jeff password=pass sslmode=require"
-Connection URL:
-   postgres://jeff:pass@foo.com/mydb
-`))
+  it('rotates credentials for a specific role with --name', () => {
+    pg.post('/postgres/v0/databases/postgres-1/credentials/my_role/credentials_rotation').reply(200)
+    return cmd.run({app: 'myapp', args: {}, flags: {name: 'my_role', confirm: 'myapp'}})
+              .then(() => expect(cli.stdout, 'to equal', ''))
+              .then(() => expect(cli.stderr, 'to equal', 'Rotating my_role on postgres-1... done\n'))
   })
 
-  it('resets credentials', () => {
-    pg.post('/client/v11/databases/1/credentials_rotation').reply(200)
-    return cmd.run({app: 'myapp', args: {}, flags: {reset: true}})
-    .then(() => expect(cli.stdout, 'to equal', ''))
-    .then(() => expect(cli.stderr, 'to equal', 'Resetting credentials on postgres-1... done\n'))
-  })
+  it('rotates credentials for all roles with --all')
+  it('fails with an error if both --all and --name are included')
 })
