@@ -35,7 +35,7 @@ Example Usage:
   args: [{name: 'database', optional: true}],
   flags: [
     {name: 'name', hasValue: true, required: true, description: 'name of credential to destroy'},
-    {name: 'confirm', char: 'c', hasValue: false}
+    {name: 'confirm', char: 'c', hasValue: true}
   ],
   run: cli.command({preauth: true}, co.wrap(run))
 }

@@ -39,7 +39,7 @@ module.exports = {
   flags: [
     {name: 'name', description: 'which credentials to rotate (default credentials if not specified)', hasValue: true},
     {name: 'all', description: 'rotate all credentials', hasValue: false},
-    {name: 'confirm', char: 'c', hasValue: false}
+    {name: 'confirm', char: 'c', hasValue: true}
   ],
   args: [{name: 'database', optional: true}],
   run: cli.command({preauth: true}, co.wrap(run))
