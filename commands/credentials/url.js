@@ -12,7 +12,7 @@ function * run (context, heroku) {
 
   let db = yield fetcher.addon(app, args.database)
   let cred = flags.name || 'default'
-  let roleInfo = yield heroku.get(`/postgres/v0/databases/${db.name}/credentials/${cred}`,
+  let roleInfo = yield heroku.get(`/postgres/v0/databases/${db.name}/credentials/${encodeURIComponent(cred)}`,
                                    { host: host(db) })
 
   let roleCreds = roleInfo.credentials.find((c) => c.user === cred && c.state === 'active')

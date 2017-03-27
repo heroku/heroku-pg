@@ -15,7 +15,7 @@ function * run (context, heroku) {
   yield cli.confirmApp(app, flags.confirm, `WARNING: Destructive action`)
 
   yield cli.action(`Destroying credential ${cli.color.cmd(cred)}`, co(function * () {
-    yield heroku.delete(`/postgres/v0/databases/${db.name}/credentials/${cred}`, {host: host(db)})
+    yield heroku.delete(`/postgres/v0/databases/${db.name}/credentials/${encodeURIComponent(cred)}`, {host: host(db)})
   }))
 
   cli.log(`The credential has been destroyed within ${db.name} and detached from all apps.`)

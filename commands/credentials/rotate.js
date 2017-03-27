@@ -24,7 +24,7 @@ function * run (context, heroku) {
     }))
   } else {
     yield cli.action(`Rotating ${cred} on ${cli.color.addon(db.name)}`, co(function * () {
-      yield heroku.post(`/postgres/v0/databases/${db.name}/credentials/${cred}/credentials_rotation`,
+      yield heroku.post(`/postgres/v0/databases/${db.name}/credentials/${encodeURIComponent(cred)}/credentials_rotation`,
                         { host: host(db) })
     }))
   }
