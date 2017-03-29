@@ -15,7 +15,7 @@ function * run (context, heroku) {
   let roleInfo = yield heroku.get(`/postgres/v0/databases/${db.name}/credentials/${encodeURIComponent(cred)}`,
                                    { host: host(db) })
 
-  let roleCreds = roleInfo.credentials.find((c) => c.user === cred && c.state === 'active')
+  let roleCreds = roleInfo.credentials.find((c) => c.state === 'active')
   if (!roleCreds) {
     cli.exit(1, `could not find any active credentials for ${cred}`)
   }
