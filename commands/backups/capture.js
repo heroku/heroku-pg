@@ -22,7 +22,7 @@ Use ${cli.color.cmd('heroku pg:backups:info')} to check progress.
 Stop a running backup with ${cli.color.cmd('heroku pg:backups:cancel')}.
 `)
 
-  yield pgbackups.wait(`Backing up ${cli.color.configVar(backup.from_name)} to ${cli.color.cyan(pgbackups.transfer.name(backup))}`, backup.uuid, interval, flags.verbose, db.app.id)
+  yield pgbackups.wait(`Backing up ${cli.color.configVar(backup.from_name)} to ${cli.color.cyan(pgbackups.transfer.name(backup))}`, backup.uuid, interval, flags.verbose, db.app.name)
 }
 
 module.exports = {
