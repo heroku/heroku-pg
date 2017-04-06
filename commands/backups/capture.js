@@ -21,6 +21,11 @@ Use Ctrl-C at any time to stop monitoring progress; the backup will continue run
 Use ${cli.color.cmd('heroku pg:backups:info')} to check progress.
 Stop a running backup with ${cli.color.cmd('heroku pg:backups:cancel')}.
 `)
+  if (context.app != db.app.name) {
+    cli.log(`HINT: You are running this command with a non-billing application.
+Use ${cli.color.cmd('heroku pg:backups -a ' + db.app.name)} to check the list of backups.
+`)
+  }
 
   yield pgbackups.wait(`Backing up ${cli.color.configVar(backup.from_name)} to ${cli.color.cyan(pgbackups.transfer.name(backup))}`, backup.uuid, interval, flags.verbose, db.app.name)
 }
