@@ -6,11 +6,13 @@ const cli = require('heroku-cli-util')
 function * run (context, heroku) {
   const fetcher = require('../../lib/fetcher')(heroku)
   const host = require('../../lib/host')
+  const util = require('../lib/util')
 
   const {app, args, flags} = context
   let cred = flags.name
 
   let db = yield fetcher.addon(app, args.database)
+  if (util.starterPlan(db)) throw new Error('This operation is not supported by Hobby tier databases.')
 
   yield cli.confirmApp(app, flags.confirm, `WARNING: Destructive action`)
 

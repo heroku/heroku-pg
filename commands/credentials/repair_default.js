@@ -6,10 +6,12 @@ const cli = require('heroku-cli-util')
 function * run (context, heroku) {
   const fetcher = require('../../lib/fetcher')(heroku)
   const host = require('../../lib/host')
+  const util = require('../lib/util')
 
   const {app, args} = context
 
   let db = yield fetcher.addon(app, args.database)
+  if (util.starterPlan(db)) throw new Error('This operation is not supported by Hobby tier databases.')
 
   yield cli.action(`Resetting permissions for default role to factory settings`, co(function * () {
     yield heroku.post(`/postgres/v0/databases/${db.name}/repair-default`, {host: host(db)})

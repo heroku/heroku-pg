@@ -7,10 +7,12 @@ const url = require('url')
 function * run (context, heroku) {
   const host = require('../../lib/host')
   const fetcher = require('../../lib/fetcher')(heroku)
+  const util = require('../lib/util')
 
   const {app, args, flags} = context
 
   let db = yield fetcher.addon(app, args.database)
+  if (util.starterPlan(db)) throw new Error('This operation is not supported by Hobby tier databases.')
   let cred = flags.name || 'default'
   let roleInfo = yield heroku.get(`/postgres/v0/databases/${db.name}/credentials/${encodeURIComponent(cred)}`,
                                    { host: host(db) })
