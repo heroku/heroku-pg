@@ -6,9 +6,10 @@ const cli = require('heroku-cli-util')
 function * run (context, heroku) {
   const host = require('../../lib/host')
   const fetcher = require('../../lib/fetcher')(heroku)
+  const util = require('../../lib/util')
   const {app, args, flags} = context
   let db = yield fetcher.addon(app, args.database)
-  let all = flags.all
+  let all = flags.all || util.starterPlan(db)
 
   if (all && 'name' in flags) {
     cli.exit(1, 'cannot pass both --all and --name')
