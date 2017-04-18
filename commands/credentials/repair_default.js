@@ -6,7 +6,7 @@ const cli = require('heroku-cli-util')
 function * run (context, heroku) {
   const fetcher = require('../../lib/fetcher')(heroku)
   const host = require('../../lib/host')
-  const util = require('../lib/util')
+  const util = require('../../lib/util')
 
   const {app, args} = context
 

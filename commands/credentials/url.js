@@ -7,7 +7,7 @@ const url = require('url')
 function * run (context, heroku) {
   const host = require('../../lib/host')
   const fetcher = require('../../lib/fetcher')(heroku)
-  const util = require('../lib/util')
+  const util = require('../../lib/util')
 
   const {app, args, flags} = context
 
