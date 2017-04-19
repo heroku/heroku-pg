@@ -9,12 +9,13 @@ function * run (context, heroku) {
   const util = require('../../lib/util')
   const {app, args, flags} = context
   let db = yield fetcher.addon(app, args.database)
-  let all = flags.all || util.starterPlan(db)
+  let all = flags.all
 
   if (all && 'name' in flags) {
     cli.exit(1, 'cannot pass both --all and --name')
   }
   let cred = flags.name || 'default'
+  if (util.starterPlan(db) && cred !== 'default') throw new Error('This operation is not supported by Hobby tier databases.')
 
   yield cli.confirmApp(app, flags.confirm, `WARNING: Destructive action`)
 

@@ -31,11 +31,12 @@ const cmd = proxyquire('../../../commands/credentials/url', {
 })
 
 describe('pg:credentials:url', () => {
-  let api, pg
+  let api, pg, starter
 
   beforeEach(() => {
     api = nock('https://api.heroku.com')
     pg = nock('https://postgres-api.heroku.com')
+    starter = nock('https://postgres-starter-api.heroku.com')
     cli.mockConsole()
   })
 
@@ -94,5 +95,47 @@ Connection URL:
 
     const err = new Error('This operation is not supported by Hobby tier databases.')
     return expect(cmd.run({app: 'myapp', args: {}, flags: {name: 'jeff'}}), 'to be rejected with', err)
+  })
+
+  it('shows the correct credentials with starter plan', () => {
+    const hobbyAddon = {
+      name: 'postgres-1',
+      plan: {name: 'heroku-postgresql:hobby-dev'}
+    }
+
+    const fetcher = () => {
+      return {
+        database: () => db,
+        addon: () => hobbyAddon
+      }
+    }
+
+    const cmd = proxyquire('../../../commands/credentials/url', {
+      '../../lib/fetcher': fetcher
+    })
+
+    let roleInfo = {
+      uuid: null,
+      name: 'default',
+      state: 'created',
+      database: 'd123',
+      host: 'localhost',
+      port: 5442,
+      credentials: [
+        {
+          user: 'abcdef',
+          password: 'hunter2',
+          state: 'active'
+        }
+      ]
+    }
+    starter.get('/postgres/v0/databases/postgres-1/credentials/default').reply(200, roleInfo)
+
+    return cmd.run({app: 'myapp', args: {}, flags: {}})
+    .then(() => expect(cli.stdout, 'to equal', `Connection info string:
+   "dbname=d123 host=localhost port=5442 user=abcdef password=hunter2 sslmode=require"
+Connection URL:
+   postgres://abcdef:hunter2@localhost:5442/d123
+`))
   })
 })

@@ -52,4 +52,25 @@ describe('pg:credentials:destroy', () => {
 Database objects owned by credname will be assigned to the default credential
 `))
   })
+
+  it('throws an error when the db is starter plan', () => {
+    const hobbyAddon = {
+      name: 'postgres-1',
+      plan: {name: 'heroku-postgresql:hobby-dev'}
+    }
+
+    const fetcher = () => {
+      return {
+        database: () => db,
+        addon: () => hobbyAddon
+      }
+    }
+
+    const cmd = proxyquire('../../../commands/credentials/destroy', {
+      '../../lib/fetcher': fetcher
+    })
+
+    const err = new Error('This operation is not supported by Hobby tier databases.')
+    return expect(cmd.run({app: 'myapp', args: {}, flags: {name: 'jeff'}}), 'to be rejected with', err)
+  })
 })

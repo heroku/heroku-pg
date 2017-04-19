@@ -50,4 +50,25 @@ describe('pg:credentials:repair-default', () => {
     .then(() => expect(cli.stdout, 'to equal', ''))
     .then(() => expect(cli.stderr, 'to equal', 'Resetting permissions for default role to factory settings... done\n'))
   })
+
+  it('throws an error when the db is starter plan', () => {
+    const hobbyAddon = {
+      name: 'postgres-1',
+      plan: {name: 'heroku-postgresql:hobby-dev'}
+    }
+
+    const fetcher = () => {
+      return {
+        database: () => db,
+        addon: () => hobbyAddon
+      }
+    }
+
+    const cmd = proxyquire('../../../commands/credentials/repair_default', {
+      '../../lib/fetcher': fetcher
+    })
+
+    const err = new Error('This operation is not supported by Hobby tier databases.')
+    return expect(cmd.run({app: 'myapp', args: {}, flags: {name: ''}}), 'to be rejected with', err)
+  })
 })
