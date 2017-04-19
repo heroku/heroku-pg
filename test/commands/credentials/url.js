@@ -74,4 +74,25 @@ Connection URL:
    postgres://jeff:hunter2@localhost:5442/d123
 `))
   })
+
+  it('throws an error when the db is starter plan but the name is specified', () => {
+    const hobbyAddon = {
+      name: 'postgres-1',
+      plan: {name: 'heroku-postgresql:hobby-dev'}
+    }
+
+    const fetcher = () => {
+      return {
+        database: () => db,
+        addon: () => hobbyAddon
+      }
+    }
+
+    const cmd = proxyquire('../../../commands/credentials/url', {
+      '../../lib/fetcher': fetcher
+    })
+
+    const err = new Error('This operation is not supported by Hobby tier databases.')
+    return expect(cmd.run({app: 'myapp', args: {}, flags: {name: 'jeff'}}), 'to be rejected with', err)
+  })
 })
