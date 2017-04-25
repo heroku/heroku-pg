@@ -19,15 +19,17 @@ function * run (context, heroku) {
 
   yield cli.confirmApp(app, flags.confirm, `WARNING: Destructive action`)
 
+  let body = flags.force ? { host: host(db), force: true} : { host: host(db) }
+
   if (all) {
     yield cli.action(`Rotating all credentials on ${cli.color.addon(db.name)}`, co(function * () {
       yield heroku.post(`/postgres/v0/databases/${db.name}/credentials_rotation`,
-                        { host: host(db) })
+                        body)
     }))
   } else {
     yield cli.action(`Rotating ${cred} on ${cli.color.addon(db.name)}`, co(function * () {
       yield heroku.post(`/postgres/v0/databases/${db.name}/credentials/${encodeURIComponent(cred)}/credentials_rotation`,
-                        { host: host(db) })
+                        body)
     }))
   }
 }
@@ -41,7 +43,8 @@ module.exports = {
   flags: [
     {name: 'name', description: 'which credentials to rotate (default credentials if not specified)', hasValue: true},
     {name: 'all', description: 'rotate all credentials', hasValue: false},
-    {name: 'confirm', char: 'c', hasValue: true}
+    {name: 'confirm', char: 'c', hasValue: true},
+    {name: 'force', description: 'forces rotating the targeted credentials', hasValue: false}
   ],
   args: [{name: 'database', optional: true}],
   run: cli.command({preauth: true}, co.wrap(run))
