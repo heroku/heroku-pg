@@ -23,8 +23,7 @@ function * run (context, heroku) {
   let psql_cmd = `heroku pg:psql ${db.name} -a ${app}`
   cli.log(`
 Please attach the credential to the apps you want to use it in by running ${cli.color.cmd(attach_cmd) }.
-Please define the new grants for the credential within Postgres: ${cli.color.cmd(psql_cmd)}.
-`)
+Please define the new grants for the credential within Postgres: ${cli.color.cmd(psql_cmd)}.`)
 }
 
 module.exports = {
