@@ -31,7 +31,7 @@ function * run (context, heroku) {
 module.exports = {
   topic: 'pg',
   command: 'credentials:destroy',
-  description: 'Destroy role within database, any database objects belonging to the role will be assigned to the default role. Attachments made with the role will need to be removed before running this command.',
+  description: 'destroy role within database',
   needsApp: true,
   needsAuth: true,
   help: `

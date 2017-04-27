@@ -29,7 +29,7 @@ Please define the new grants for the credential within Postgres: ${cli.color.cmd
 module.exports = {
   topic: 'pg',
   command: 'credentials:create',
-  description: 'Create role within database.',
+  description: 'create credential within database',
   needsApp: true,
   needsAuth: true,
   help: `

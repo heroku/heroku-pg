@@ -48,7 +48,7 @@ Connection URL:
 module.exports = {
   topic: 'pg',
   command: 'credentials:url',
-  description: 'show database credentials',
+  description: 'show information on credentials in the database',
   needsApp: true,
   needsAuth: true,
   flags: [
