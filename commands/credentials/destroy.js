@@ -15,8 +15,8 @@ function * run (context, heroku) {
   if (util.starterPlan(db)) throw new Error('This operation is not supported by Hobby tier databases.')
 
   let attachments = yield heroku.get(`/addons/${db.name}/addon-attachments`)
-  let credential_attachments = attachments.filter(a => a.namespace === `credential:${flags.name}`)
-  if (credential_attachments.length > 0) throw new Error(`Credential ${flags.name} must be detached from all other apps before destroying.`)
+  let credAttachments = attachments.filter(a => a.namespace === `credential:${flags.name}`)
+  if (credAttachments.length > 0) throw new Error(`Credential ${flags.name} must be detached from all other apps before destroying.`)
 
   yield cli.confirmApp(app, flags.confirm, `WARNING: Destructive action`)
 
