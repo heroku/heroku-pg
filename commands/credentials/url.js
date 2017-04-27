@@ -38,7 +38,8 @@ function * run (context, heroku) {
     protocol: 'postgres:',
     slashes: true
   })
-  cli.log(`Connection info string:
+  cli.log(`Connection information for ${cred} credential.
+Connection info string:
    "dbname=${creds.database} host=${creds.host} port=${creds.port} user=${creds.user} password=${creds.password} sslmode=require"
 Connection URL:
    ${connUrl}`)
