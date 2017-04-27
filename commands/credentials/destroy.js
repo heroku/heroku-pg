@@ -24,8 +24,8 @@ function * run (context, heroku) {
     yield heroku.delete(`/postgres/v0/databases/${db.name}/credentials/${encodeURIComponent(cred)}`, {host: host(db)})
   }))
 
-  cli.log(`The credential has been destroyed within ${db.name} and detached from all apps.`)
-  cli.log(`Database objects owned by ${cred} will be assigned to the default credential`)
+  cli.log(`The credential has been destroyed within ${db.name}.`)
+  cli.log(`Database objects owned by ${cred} will be assigned to the default credential.`)
 }
 
 module.exports = {
@@ -40,7 +40,7 @@ Example Usage:
 `,
   args: [{name: 'database', optional: true}],
   flags: [
-    {name: 'name', char: 'n', hasValue: true, required: true, description: 'name of credential to destroy'},
+    {name: 'name', char: 'n', hasValue: true, required: true, description: 'unique identifier for the credential'},
     {name: 'confirm', char: 'c', hasValue: true}
   ],
   run: cli.command({preauth: true}, co.wrap(run))
