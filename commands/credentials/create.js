@@ -34,7 +34,7 @@ module.exports = {
   needsAuth: true,
   help: `
 Example Usage:
-  heroku pg:credentials:create postgresql-something-12345 --name new_role_name
+  heroku pg:credentials:create postgresql-something-12345 --name new-cred-name
 `,
   args: [{name: 'database', optional: true}],
   flags: [{name: 'name', char: 'n', hasValue: true, required: true, description: 'name of the new credential within the database'}],

@@ -14,21 +14,21 @@ function * run (context, heroku) {
   let db = yield fetcher.addon(app, args.database)
   let cred = flags.name || 'default'
   if (util.starterPlan(db) && cred !== 'default') throw new Error('This operation is not supported by Hobby tier databases.')
-  let roleInfo = yield heroku.get(`/postgres/v0/databases/${db.name}/credentials/${encodeURIComponent(cred)}`,
+  let credInfo = yield heroku.get(`/postgres/v0/databases/${db.name}/credentials/${encodeURIComponent(cred)}`,
                                    { host: host(db) })
 
-  let roleCreds = roleInfo.credentials.find((c) => c.state === 'active')
-  if (!roleCreds) {
+  let activeCreds = credInfo.credentials.find((c) => c.state === 'active')
+  if (!activeCreds) {
     cli.exit(1, `could not find any active credentials for ${cred}`)
   }
 
   let creds = Object.assign({}, db, {
-    database: roleInfo.database,
-    host: roleInfo.host,
-    port: roleInfo.port
+    database: credInfo.database,
+    host: credInfo.host,
+    port: credInfo.port
   }, {
-    user: roleCreds.user,
-    password: roleCreds.password
+    user: activeCreds.user,
+    password: activeCreds.password
   })
 
   let connUrl = url.format({
@@ -48,7 +48,7 @@ Connection URL:
 module.exports = {
   topic: 'pg',
   command: 'credentials:url',
-  description: 'show information on credentials in the database',
+  description: 'show information on a database credential',
   needsApp: true,
   needsAuth: true,
   flags: [

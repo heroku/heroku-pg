@@ -31,12 +31,12 @@ function * run (context, heroku) {
 module.exports = {
   topic: 'pg',
   command: 'credentials:destroy',
-  description: 'destroy role within database',
+  description: 'destroy credential within database',
   needsApp: true,
   needsAuth: true,
   help: `
 Example Usage:
-  heroku pg:credentials:destroy postgresql-transparent-56874 --name chucks-role -a woodstock-production
+  heroku pg:credentials:destroy postgresql-transparent-56874 --name cred-name -a woodstock-production
 `,
   args: [{name: 'database', optional: true}],
   flags: [
