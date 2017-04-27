@@ -36,7 +36,7 @@ module.exports = {
   needsAuth: true,
   help: `
 Example Usage:
-  heroku pg:credentials:destroy postgresql-something-12345 --name role_to_destroy
+  heroku pg:credentials:destroy postgresql-transparent-56874 --name chucks-role -a woodstock-production
 `,
   args: [{name: 'database', optional: true}],
   flags: [
