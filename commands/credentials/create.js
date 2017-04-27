@@ -32,6 +32,6 @@ Example Usage:
   heroku pg:credentials:create postgresql-something-12345 --name new_role_name
 `,
   args: [{name: 'database', optional: true}],
-  flags: [{name: 'name', hasValue: true, required: true, description: 'name of the new credential within the database'}],
+  flags: [{name: 'name', char: 'n', hasValue: true, required: true, description: 'name of the new credential within the database'}],
   run: cli.command({preauth: true}, co.wrap(run))
 }

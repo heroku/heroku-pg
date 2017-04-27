@@ -41,7 +41,7 @@ module.exports = {
   needsApp: true,
   needsAuth: true,
   flags: [
-    {name: 'name', description: 'which credentials to rotate (default credentials if not specified)', hasValue: true},
+    {name: 'name', char: 'n', description: 'which credentials to rotate (default credentials if not specified)', hasValue: true},
     {name: 'all', description: 'rotate all credentials', hasValue: false},
     {name: 'confirm', char: 'c', hasValue: true},
     {name: 'force', description: 'forces rotating the targeted credentials', hasValue: false}
