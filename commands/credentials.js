@@ -24,9 +24,9 @@ function * run (context, heroku) {
       if (err.statusCode !== 422) throw err
       let db = yield fetcher.database(app, args.database)
       cli.log(`Connection info string:
-        "dbname=${db.database} host=${db.host} port=${db.port || 5432} user=${db.user} password=${db.password} sslmode=require"
-      Connection URL:
-        ${db.url.href}`)
+   "dbname=${db.database} host=${db.host} port=${db.port || 5432} user=${db.user} password=${db.password} sslmode=require"
+Connection URL:
+   ${db.url.href}`)
     }
   })
 
