@@ -9,11 +9,24 @@ function * run (context, heroku) {
   const {app, args, flags} = context
 
   let showCredentials = co.wrap(function * () {
-    let db = yield fetcher.database(app, args.database)
-    cli.log(`Connection info string:
-   "dbname=${db.database} host=${db.host} port=${db.port || 5432} user=${db.user} password=${db.password} sslmode=require"
-Connection URL:
-   ${db.url.href}`)
+    const host = require('../lib/host')
+    let addon = yield fetcher.addon(app, args.database)
+    let credentials = yield heroku.get(`/postgres/v0/databases/${addon.name}/credentials`,
+                                       { host: host(db) })
+    if no errors
+      cli.table(credentials, {
+        columns: [
+          {key: 'name', label: 'Credential'},
+          {key: 'state', label: 'State'}
+        ]
+      })
+    else
+      let db = yield fetcher.database(app, args.database)
+      cli.log(`Connection info string:
+     "dbname=${db.database} host=${db.host} port=${db.port || 5432} user=${db.user} password=${db.password} sslmode=require"
+  Connection URL:
+     ${db.url.href}`)
+    end
   })
 
   let reset = co.wrap(function * () {
@@ -29,20 +42,6 @@ Connection URL:
   } else {
     yield showCredentials()
   }
-  const host = require('../lib/host')
-
-  const {app, args} = context
-
-  let db = yield fetcher.addon(app, args.database)
-
-  let credentials = yield heroku.get(`/postgres/v0/databases/${db.name}/credentials`,
-                                     { host: host(db) })
-  cli.table(credentials, {
-    columns: [
-      {key: 'name', label: 'Credential'},
-      {key: 'state', label: 'State'}
-    ]
-  })
 }
 
 module.exports = {

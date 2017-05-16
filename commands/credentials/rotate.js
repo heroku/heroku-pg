@@ -19,7 +19,7 @@ function * run (context, heroku) {
 
   yield cli.confirmApp(app, flags.confirm, `WARNING: Destructive action`)
 
-  let body = flags.force ? { host: host(db), force: true} : { host: host(db) }
+  let body = flags.force ? {host: host(db), force: true} : {host: host(db)}
 
   if (all) {
     yield cli.action(`Rotating all credentials on ${cli.color.addon(db.name)}`, co(function * () {

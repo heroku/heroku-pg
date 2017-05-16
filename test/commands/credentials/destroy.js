@@ -101,5 +101,4 @@ Database objects owned by credname will be assigned to the default credential.
     const err = new Error('Credential jeff must be detached from all other apps before destroying.')
     return expect(cmd.run({app: 'myapp', args: {}, flags: {name: 'jeff'}}), 'to be rejected with', err)
   })
-
 })
