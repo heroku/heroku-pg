@@ -22,15 +22,21 @@ function * run (context, heroku) {
     attachments = attachments.filter(a => a.namespace === `credential:${cred}`)
   }
 
-  let warning = all ? `Connections will be reset and applications will be restarted.` :
-`The password for the ${cred} credential will rotate.
-Connections older than 30 minutes will be reset, and a temporary rotation username will be used during the process.`
+  let warnings = []
+  if (!flags.all) {
+    warnings.push(`The password for the ${cred} credential will rotate.`)
+  }
+  if (flags.all || flags.force) {
+    warnings.push(`Connections will be reset and applications will be restarted.`)
+  } else {
+    warnings.push(`Connections older than 30 minutes will be reset, and a temporary rotation username will be used during the process.`)
+  }
   if (attachments.length > 0) {
-    warning += `\nThis command will affect the app${ (attachments.length > 1) ? 's' : ''} ${[...new Set(attachments.map(c => cli.color.app(c.app.name)))].sort().join(', ')}`
+    warnings.push(`This command will affect the app${(attachments.length > 1) ? 's' : ''} ${[...new Set(attachments.map(c => cli.color.app(c.app.name)))].sort().join(', ')}.`)
   }
 
   yield cli.confirmApp(app, flags.confirm, `WARNING: Destructive Action
-${warning}`)
+${warnings.join('\n')}`)
 
   let body = flags.force ? {host: host(db), force: true} : {host: host(db)}
 
