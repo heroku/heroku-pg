@@ -13,7 +13,10 @@ function * run (context, heroku) {
 
   let db = yield fetcher.addon(app, args.database)
   let cred = flags.name || 'default'
-  if (util.starterPlan(db) && cred !== 'default') throw new Error('This operation is not supported by Hobby tier databases.')
+  if (util.starterPlan(db) && cred !== 'default') {
+    throw new Error(`Could not find credential ${cred} for database ${db.name}.
+Only one default credential is supported for Hobby tier databases.`)
+  }
   let credInfo = yield heroku.get(`/postgres/v0/databases/${db.name}/credentials/${encodeURIComponent(cred)}`,
                                    { host: host(db) })
 

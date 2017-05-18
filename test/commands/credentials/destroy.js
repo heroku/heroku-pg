@@ -78,7 +78,8 @@ Database objects owned by credname will be assigned to the default credential.
       '../../lib/fetcher': fetcher
     })
 
-    const err = new Error('This operation is not supported by Hobby tier databases.')
+    const err = new Error(`Could not find credential jeff for database postgres-1.
+Only one default credential is supported for Hobby tier databases.`)
     return expect(cmd.run({app: 'myapp', args: {}, flags: {name: 'jeff'}}), 'to be rejected with', err)
   })
 
