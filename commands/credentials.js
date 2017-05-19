@@ -25,8 +25,8 @@ function * run (context, heroku) {
       return output.join(' ')
     }
 
-    function renderAttachment (attachment, app, isFirst) {
-      let line = isFirst ? '└─' : '├─'
+    function renderAttachment (attachment, app, isLast) {
+      let line = isLast ? '└─' : '├─'
       let attName = formatAttachment(attachment)
       return printf(' %s %s', cli.color.dim(line), attName)
     }
@@ -47,8 +47,8 @@ function * run (context, heroku) {
 
       // render each attachment under the credential
       let attLines = atts.map(function (attachment, idx) {
-        let isFirst = (idx === credAttachments.length - 1)
-        return renderAttachment(attachment, app, isFirst)
+        let isLast = (idx === credAttachments.length - 1)
+        return renderAttachment(attachment, app, isLast)
       })
 
       return [cred].concat(attLines).join('\n')
