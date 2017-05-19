@@ -19,8 +19,7 @@ function * run (context, heroku) {
     cli.exit(1, 'Cannot force rotate the default credential.')
   }
   if (util.starterPlan(db) && cred !== 'default') {
-    throw new Error(`Could not find credential ${cred} for database ${db.name}.
-Only one default credential is supported for Hobby tier databases.`)
+    throw new Error(`Only one default credential is supported for Hobby tier databases.`)
   }
   let attachments = yield heroku.get(`/addons/${db.name}/addon-attachments`)
   if (flags.name) {

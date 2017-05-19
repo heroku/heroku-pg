@@ -17,8 +17,7 @@ function * run (context, heroku) {
 
   let db = yield fetcher.addon(app, args.database)
   if (util.starterPlan(db)) {
-    throw new Error(`Could not find credential ${cred} for database ${db.name}.
-Only one default credential is supported for Hobby tier databases.`)
+    throw new Error(`Only one default credential is supported for Hobby tier databases.`)
   }
 
   let attachments = yield heroku.get(`/addons/${db.name}/addon-attachments`)
