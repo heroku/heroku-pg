@@ -12,11 +12,11 @@ function * run (context, heroku) {
   let all = flags.all
 
   if (all && 'name' in flags) {
-    cli.exit(1, 'cannot pass both --all and --name')
+    throw new Error('cannot pass both --all and --name')
   }
   let cred = flags.name || 'default'
-  if (cred === 'default' && 'force' in flags && !all) {
-    cli.exit(1, 'Cannot force rotate the default credential.')
+  if ((cred === 'default' || all) && 'force' in flags) {
+    throw new Error('Cannot force rotate the default credential.')
   }
   if (util.starterPlan(db) && cred !== 'default') {
     throw new Error(`Only one default credential is supported for Hobby tier databases.`)
