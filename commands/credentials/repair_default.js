@@ -25,8 +25,9 @@ module.exports = {
   needsApp: true,
   needsAuth: true,
   help: `
-Example Usage:
-  heroku pg:credentials:repair-default postgresql-something-12345
+Example:
+
+    heroku pg:credentials:repair-default postgresql-something-12345
 `,
   args: [{name: 'database', optional: true}],
   run: cli.command({preauth: true}, co.wrap(run))

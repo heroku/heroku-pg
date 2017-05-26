@@ -41,8 +41,9 @@ module.exports = {
   needsApp: true,
   needsAuth: true,
   help: `
-Example Usage:
-  heroku pg:credentials:destroy postgresql-transparent-56874 --name cred-name -a woodstock-production
+Example:
+
+    heroku pg:credentials:destroy postgresql-transparent-56874 --name cred-name -a woodstock-production
 `,
   args: [{name: 'database', optional: true}],
   flags: [
