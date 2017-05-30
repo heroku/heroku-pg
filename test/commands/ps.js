@@ -44,6 +44,7 @@ describe('pg:ps', () => {
  pid,
  state,
  application_name AS source,
+ usename,
  age(now(),xact_start) AS running_for,
  wait_event IS NOT NULL AS waiting,
  query
@@ -61,6 +62,7 @@ WHERE
  pid,
  state,
  application_name AS source,
+ usename,
  age(now(),xact_start) AS running_for,
  wait_event IS NOT NULL AS waiting,
  query
