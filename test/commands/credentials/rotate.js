@@ -101,7 +101,7 @@ describe('pg:credentials:rotate', () => {
   })
 
   it('fails with an error if both --force and --all are included', () => {
-    const err = new Error(`Cannot force rotate the default credential.`)
+    const err = new Error(`Cannot force rotate all credentials: the default credential cannot be force rotated.`)
     return expect(cmd.run({app: 'myapp', args: {}, flags: {force: true, all: true, confirm: 'myapp'}}), 'to be rejected with', err)
   })
 

@@ -16,7 +16,11 @@ function * run (context, heroku) {
   }
   let cred = flags.name || 'default'
   if ((cred === 'default' || all) && 'force' in flags) {
-    throw new Error('Cannot force rotate the default credential.')
+    if (all) {
+      throw new Error('Cannot force rotate all credentials: the default credential cannot be force rotated.')
+    } else {
+      throw new Error('Cannot force rotate the default credential.')
+    }
   }
   if (util.starterPlan(db) && cred !== 'default') {
     throw new Error(`Only one default credential is supported for Hobby tier databases.`)
