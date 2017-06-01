@@ -12,6 +12,7 @@ function * run (context, heroku) {
   const {verbose} = flags
 
   let db = yield fetcher.database(app, database)
+  let addon = yield fetcher.addon(app, database)
 
   const num = Math.random()
   const waitingMarker = `${num}${num}`
@@ -27,20 +28,18 @@ SELECT '${num}' || '${num}' WHERE EXISTS (
   let waiting = waitingOutput.includes(waitingMarker)
                 ? 'waiting'
                 : 'wait_event IS NOT NULL AS waiting'
-
   let query = `
 SELECT
  pid,
  state,
  application_name AS source,
+ usename AS username,
  age(now(),xact_start) AS running_for,
  ${waiting},
  query
 FROM pg_stat_activity
 WHERE
- query <> '<insufficient privilege>'
- ${verbose ? '' : "AND state <> 'idle'"}
- AND pid <> pg_backend_pid()
+ pid <> pg_backend_pid()
  ORDER BY query_start DESC
 `
 
