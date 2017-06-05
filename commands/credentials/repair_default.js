@@ -14,8 +14,8 @@ function * run (context, heroku) {
   if (util.starterPlan(db)) throw new Error('This operation is not supported by Hobby tier databases.')
 
   yield cli.confirmApp(app, flags.confirm, `WARNING: Destructive Action
-This command will give the default credential ownership of all database objects owned by additional credentials. 
-It will also grant the default credential admin option all additional credentials.
+Ownership of all database objects owned by additional credentials will be transferred to the default credential.
+This command will also grant the default credential admin option for all additional credentials.
 `)
 
   yield cli.action(`Resetting permissions and object ownership for default role to factory settings`, co(function * () {
