@@ -14,6 +14,7 @@ function * run (context, heroku) {
     const host = require('../lib/host')
     let addon = yield fetcher.addon(app, args.database)
     let attachments = []
+    let credentials = []
 
     function formatAttachment (attachment) {
       let attName = cli.color.addon(attachment.name)
@@ -51,11 +52,36 @@ function * run (context, heroku) {
         return renderAttachment(attachment, app, isLast)
       })
 
-      return [cred].concat(attLines).join('\n')
+      let rotationLines = []
+      let credentialStore = credentials.filter(a => a.name === cred)[0]
+      if (credentialStore.state === 'rotating') {
+        let formatted = credentialStore.credentials.map(function (credential, idx) {
+          return {
+            'user': credential.user,
+            'state': credential.state,
+            'connections': credential.connections
+          }
+        })
+        let connectionInformationAvailable = formatted.some(function (c) { return c.connections })
+        if (connectionInformationAvailable) {
+          let prefix = '       '
+          rotationLines.push(`${prefix}Usernames currently active for this credential:`)
+          cli.table(formatted, {
+            printHeader: false,
+            printLine: function (line) { rotationLines.push(line) },
+            columns: [
+              {key: 'user', format: (v, r) => `${prefix}${v}`},
+              {key: 'state', format: (v, r) => (v === 'revoking') ? 'waiting for no connections to be revoked' : v},
+              {key: 'connections', format: (v, r) => `${v} connections`}
+            ]
+          })
+        }
+      }
+      return [cred].concat(attLines).concat(rotationLines).join('\n')
     }
 
     try {
-      let credentials = yield heroku.get(`/postgres/v0/databases/${addon.name}/credentials`,
+      credentials = yield heroku.get(`/postgres/v0/databases/${addon.name}/credentials`,
                                        { host: host(addon) })
       let isDefaultCredential = (cred) => cred.name !== 'default'
       credentials = sortBy(credentials, isDefaultCredential, 'name')
