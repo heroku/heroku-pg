@@ -24,8 +24,7 @@ module.exports = {
   description: 'repair the permissions of the default credential within database',
   needsApp: true,
   needsAuth: true,
-  help: `
-Example:
+  help: `Example:
 
     heroku pg:credentials:repair-default postgresql-something-12345
 `,

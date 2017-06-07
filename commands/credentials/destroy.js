@@ -40,8 +40,7 @@ module.exports = {
   description: 'destroy credential within database',
   needsApp: true,
   needsAuth: true,
-  help: `
-Example:
+  help: `Example:
 
     heroku pg:credentials:destroy postgresql-transparent-56874 --name cred-name -a woodstock-production
 `,
