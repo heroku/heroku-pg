@@ -87,7 +87,7 @@ function * run (context, heroku) {
 module.exports = {
   topic: 'pg',
   command: 'credentials',
-  description: 'manage the database credentials',
+  description: 'show information on credentials in the database',
   needsApp: true,
   needsAuth: true,
   flags: [{name: 'reset', description: 'reset database credentials'}],
