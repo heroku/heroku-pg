@@ -62,7 +62,7 @@ function * run (context, heroku) {
             'connections': credential.connections
           }
         })
-        let connectionInformationAvailable = formatted.some(function (c) { return c.connections })
+        let connectionInformationAvailable = formatted.some((c) => c.connections)
         if (connectionInformationAvailable) {
           let prefix = '       '
           rotationLines.push(`${prefix}Usernames currently active for this credential:`)
