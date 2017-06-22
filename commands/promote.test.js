@@ -4,19 +4,19 @@
 const cli = require('heroku-cli-util')
 const expect = require('unexpected')
 const nock = require('nock')
-const proxyquire = require('proxyquire')
+const cmd = require('./promote')
 
 const addon = {
   name: 'postgres-1'
 }
-const fetcher = () => {
+const mockFetcher = () => {
   return {
     addon: () => addon
   }
 }
 
-const cmd = proxyquire('../../commands/promote', {
-  '../lib/fetcher': fetcher
+jest.mock('../lib/fetcher', () => {
+  return mockFetcher
 })
 
 describe('pg:promote', () => {
