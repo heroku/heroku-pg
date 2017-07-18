@@ -9,7 +9,7 @@ function explain (setting) {
 
 module.exports = {
   topic: 'pg',
-  command: 'settings:log_statement',
+  command: 'settings:log-statement',
   description: `log_statement controls which SQL statements are logged.`,
   help: `Valid values for VALUE:
 none - No statements are logged

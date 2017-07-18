@@ -86,6 +86,8 @@ describe('setter', () => {
 
     it('raise error if not a number', () => {
       expect(() => setter.numeric('not a number'), 'to throw a', TypeError)
+      expect(() => setter.numeric('NaN'), 'to throw a', TypeError)
+      expect(() => setter.numeric('Infinite'), 'to throw a', TypeError)
     })
   })
 

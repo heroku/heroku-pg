@@ -16,8 +16,11 @@ function * run (context, heroku) {
 
   let settings = yield heroku.get(`/postgres/v0/databases/${db.id}/config`, {host: host(db)})
   cli.styledHeader(db.name)
-  Object.keys(settings).forEach((key) => { settings[key] = settings[key]['value'] })
-  cli.styledObject(settings)
+  let remapped = Object.keys(settings).reduce((s, key) => {
+    s[key] = settings[key]['value']
+    return s
+  }, {})
+  cli.styledObject(remapped)
 }
 
 module.exports = {

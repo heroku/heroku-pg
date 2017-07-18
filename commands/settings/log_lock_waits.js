@@ -12,7 +12,7 @@ function explain (setting) {
 
 module.exports = {
   topic: 'pg',
-  command: 'settings:log_lock_waits',
+  command: 'settings:log-lock-waits',
   description: `Controls whether a log message is produced when a session waits longer than the deadlock_timeout to acquire a lock. deadlock_timeout is set to 1 second`,
   help: `Delays due to lock contention occur when multiple transactions are trying to access the same resource at the same time.
 Applications and their query patterns should try to avoid changes to many different tables within the same transaction.`,

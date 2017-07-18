@@ -15,7 +15,7 @@ function explain (setting) {
 
 module.exports = {
   topic: 'pg',
-  command: 'settings:log_min_duration_statement',
+  command: 'settings:log-min-duration-statement',
   description: `The duration of each completed statement will be logged if the statement completes after the time specified by VALUE.
 VALUE needs to specified as a whole number, in milliseconds.`,
   help: `Setting log_min_duration_statement to zero prints all statement durations and -1 will disable logging statement durations.`,
