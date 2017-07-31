@@ -63,10 +63,12 @@ describe('setter', () => {
   describe('boolean', () => {
     it('returns true if on or true', () => {
       expect(setter.boolean('on'), 'to equal', true)
+      expect(setter.boolean('ON'), 'to equal', true)
       expect(setter.boolean('true'), 'to equal', true)
     })
 
     it('returns false if off, false or null', () => {
+      expect(setter.boolean('OFF'), 'to equal', false)
       expect(setter.boolean('off'), 'to equal', false)
       expect(setter.boolean('false'), 'to equal', false)
       expect(setter.boolean(null), 'to equal', false)

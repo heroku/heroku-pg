@@ -26,7 +26,7 @@ function * run (context, heroku) {
 module.exports = {
   topic: 'pg',
   command: 'settings',
-  description: 'show current settings',
+  description: 'show your current database settings',
   needsApp: true,
   needsAuth: true,
   args: [{name: 'database', optional: true}],
