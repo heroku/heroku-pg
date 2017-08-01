@@ -17,7 +17,7 @@ function * run (context, heroku) {
   let settings = yield heroku.get(`/postgres/v0/databases/${db.id}/config`, {host: host(db)})
   cli.styledHeader(db.name)
   let remapped = Object.keys(settings).reduce((s, key) => {
-    s[key] = settings[key]['value']
+    s[key.replace(/_/g, '-')] = settings[key]['value']
     return s
   }, {})
   cli.styledObject(remapped)
