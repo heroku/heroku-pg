@@ -196,11 +196,11 @@ This command will affect the apps appname_1, appname_2, appname_3.`
       args: {},
       flags: { all: true, force: true, confirm: 'myapp' }})
       .then(() => {
-      expect(lastApp, 'to equal', 'myapp')
-      expect(lastConfirm, 'to equal', 'myapp')
-      expect(lastMsg, 'to equal', message)
+        expect(lastApp, 'to equal', 'myapp')
+        expect(lastConfirm, 'to equal', 'myapp')
+        expect(lastMsg, 'to equal', message)
+      })
     })
-  })
 
   it('requires app confirmation for rotating a specific role with --name', () => {
     pg.post('/postgres/v0/databases/postgres-1/credentials/my_role/credentials_rotation').reply(200)
