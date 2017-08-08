@@ -188,7 +188,7 @@ This command will affect the apps appname_1, appname_2, appname_3.`
     pg.post('/postgres/v0/databases/postgres-1/credentials_rotation').reply(200)
 
     const message = `WARNING: Destructive Action
-WARNING: This forces rotation on all credentials including the default credential.
+This forces rotation on all credentials including the default credential.
 Connections will be reset and applications will be restarted.
 This command will affect the apps appname_1, appname_2, appname_3.`
 

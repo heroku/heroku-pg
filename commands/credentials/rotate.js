@@ -20,7 +20,7 @@ function * run (context, heroku) {
     throw new Error(`Only one default credential is supported for Hobby tier databases.`)
   }
   if (all && flags.force) {
-    warnings.push('WARNING: This forces rotation on all credentials including the default credential.')
+    warnings.push('This forces rotation on all credentials including the default credential.')
   }
   let attachments = yield heroku.get(`/addons/${db.name}/addon-attachments`)
   if (flags.name) {
