@@ -11,6 +11,7 @@ function * run (context, heroku) {
   let db = yield fetcher.addon(app, args.database)
   let all = flags.all
   let warnings = []
+  let cred = flags.name || 'default'
 
   if (all && flags.name !== undefined) {
     throw new Error('cannot pass both --all and --name')
@@ -18,7 +19,6 @@ function * run (context, heroku) {
   if (util.starterPlan(db) && cred !== 'default') {
     throw new Error(`Only one default credential is supported for Hobby tier databases.`)
   }
-  let cred = flags.name || 'default'
   if (all && flags.force) {
     warnings.push('WARNING: This forces rotation on all credentials including the default credential.')
   }
