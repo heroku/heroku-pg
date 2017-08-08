@@ -100,16 +100,6 @@ describe('pg:credentials:rotate', () => {
     return expect(cmd.run({app: 'myapp', args: {}, flags: {all: true, name: 'my_role', confirm: 'myapp'}}), 'to be rejected with', err)
   })
 
-  it('fails with an error if both --force and --all are included', () => {
-    const err = new Error(`Cannot force rotate all credentials: the default credential cannot be force rotated.`)
-    return expect(cmd.run({app: 'myapp', args: {}, flags: {force: true, all: true, confirm: 'myapp'}}), 'to be rejected with', err)
-  })
-
-  it('fails with an error if both --name default and --force are included', () => {
-    const err = new Error(`Cannot force rotate the default credential.`)
-    return expect(cmd.run({app: 'myapp', args: {}, flags: {force: true, name: 'default', confirm: 'myapp'}}), 'to be rejected with', err)
-  })
-
   it('throws an error when the db is starter plan but the name is specified', () => {
     const hobbyAddon = {
       name: 'postgres-1',
