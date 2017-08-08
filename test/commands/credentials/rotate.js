@@ -184,6 +184,24 @@ This command will affect the apps appname_1, appname_2, appname_3.`
     })
   })
 
+  it('requires app confirmation for rotating all roles with --all and --force', () => {
+    pg.post('/postgres/v0/databases/postgres-1/credentials_rotation').reply(200)
+
+    const message = `WARNING: Destructive Action
+    WARNING: This forces rotation on all credentials including the default credential.
+    Connections will be reset and applications will be restarted.
+    This command will affect the apps appname_1, appname_2, appname_3.`
+
+    return cmd.run({app: 'myapp',
+      args: {},
+      flags: { all: true, force: true, confirm: 'myapp' }})
+      .then(() => {
+      expect(lastApp, 'to equal', 'myapp')
+      expect(lastConfirm, 'to equal', 'myapp')
+      expect(lastMsg, 'to equal', message)
+    })
+  })
+
   it('requires app confirmation for rotating a specific role with --name', () => {
     pg.post('/postgres/v0/databases/postgres-1/credentials/my_role/credentials_rotation').reply(200)
 
