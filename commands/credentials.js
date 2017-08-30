@@ -58,7 +58,7 @@ module.exports = {
   description: 'show information on credentials in the database',
   needsApp: true,
   needsAuth: true,
-  flags: [{name: 'reset', description: 'reset database credentials'}],
+  flags: [{name: 'reset', description: 'deprecated'}],
   args: [{name: 'database', optional: true}],
   run: cli.command({preauth: true}, co.wrap(run))
 }
