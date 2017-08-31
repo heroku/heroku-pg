@@ -32,7 +32,7 @@ describe('pg:promote', () => {
     api.done()
   })
 
-  it('promotes db', () => {
+  it('promotes db and creates another attachment if current DATABASE does not have another', () => {
     api.get('/apps/myapp/addon-attachments').reply(200, [
       {name: 'DATABASE', addon: {name: 'postgres-2'}}
     ])
@@ -41,6 +41,23 @@ describe('pg:promote', () => {
       addon: {name: 'postgres-2'},
       confirm: 'myapp'
     }).reply(201, {name: 'RED'})
+    api.post('/addon-attachments', {
+      name: 'DATABASE',
+      app: {name: 'myapp'},
+      addon: {name: 'postgres-1'},
+      confirm: 'myapp'
+    }).reply(201)
+    return cmd.run({app: 'myapp', args: {}, flags: {}})
+    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
+Promoting postgres-1 to DATABASE_URL on myapp... done
+`))
+  })
+
+  it('promotes db and creates another attachment if current DATABASE does not have another', () => {
+    api.get('/apps/myapp/addon-attachments').reply(200, [
+      {name: 'DATABASE', addon: {name: 'postgres-2'}},
+      {name: 'PURPLE', addon: {name: 'postgres-2'}}
+    ])
     api.post('/addon-attachments', {
       name: 'DATABASE',
       app: {name: 'myapp'},
