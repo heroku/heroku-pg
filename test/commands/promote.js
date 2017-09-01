@@ -19,7 +19,7 @@ const cmd = proxyquire('../../commands/promote', {
   '../lib/fetcher': fetcher
 })
 
-describe('pg:promote', () => {
+describe('pg:promote when argument is database', () => {
   let api
 
   beforeEach(() => {
@@ -53,7 +53,7 @@ Promoting postgres-1 to DATABASE_URL on myapp... done
 `))
   })
 
-  it('promotes db and creates another attachment if current DATABASE does not have another', () => {
+  it('promotes db and does not create another attachment if current DATABASE has another', () => {
     api.get('/apps/myapp/addon-attachments').reply(200, [
       {name: 'DATABASE', addon: {name: 'postgres-2'}},
       {name: 'PURPLE', addon: {name: 'postgres-2'}}
@@ -65,8 +65,17 @@ Promoting postgres-1 to DATABASE_URL on myapp... done
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
+    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... PURPLE_URL
 Promoting postgres-1 to DATABASE_URL on myapp... done
 `))
+  })
+
+  it('does not promote the db if is already is DATABASE', () => {
+    api.get('/apps/myapp/addon-attachments').reply(200, [
+      {name: 'DATABASE', addon: {name: 'postgres-1'}},
+      {name: 'PURPLE', addon: {name: 'postgres-1'}}
+    ])
+    const err = new Error(`postgres-1 is already promoted on myapp`)
+    return expect(cmd.run({app: 'myapp', args: {}, flags: {}}), 'to be rejected with', err)
   })
 })
