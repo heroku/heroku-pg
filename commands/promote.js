@@ -17,8 +17,6 @@ function * run (context, heroku) {
     // If no current DATABASE, return nil.
     let attachments = yield heroku.get(`/apps/${app}/addon-attachments`)
     let current = attachments.find(a => a.name === 'DATABASE')
-    console.log(current)
-    console.log(attachment)
     if (!current) return
     if (current.addon.name === attachment.addon.name && current.namespace === attachment.namespace) {
       if (attachment.namespace) {
