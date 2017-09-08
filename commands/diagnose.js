@@ -81,6 +81,18 @@ module.exports = {
   help: `
 defaults to DATABASE_URL database if no DATABASE is specified
 if REPORT_ID is specified instead, a previous report is displayed
+
+  Example:
+
+    $ heroku pg:diagnose postgresql-orange-59502
+    Report 91531a-a74ce-4b-853571ae5cd4e-e643ab for murmuring-headland-14719::DATABASE_URL                                                                                         
+    available for one month after creation on 2017-09-05T20:46:39.850522+00:00
+
+    GREEN: Connection Count
+    GREEN: Long Queries
+    GREEN: Idle in Transaction
+    GREEN: Indexes
+    GREEN: Bloat
 `,
   needsApp: true,
   needsAuth: true,

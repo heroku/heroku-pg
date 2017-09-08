@@ -70,7 +70,10 @@ module.exports = {
   needsApp: true,
   needsAuth: true,
   description: 'copy all data from source db to target',
-  help: 'at least one of the databases must be a Heroku PostgreSQL DB',
+  help: `at least one of the databases must be a Heroku PostgreSQL DB
+  Example:
+
+    $ heroku pg:copy $SOURCE_DB $DEST_DB --app murmuring-headland-14719`,
   args: [
     {name: 'source'},
     {name: 'target'}

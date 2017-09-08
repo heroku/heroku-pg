@@ -36,7 +36,10 @@ let cmd = {
     // ignored but present for backwards compatibility
     {name: 'quiet', char: 'q', hidden: true}
   ],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:backups:url 1a8as1 --app murmuring-headland-14719`
 }
 
 module.exports = [

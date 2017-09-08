@@ -57,5 +57,11 @@ module.exports = {
   needsAuth: true,
   flags: [{name: 'verbose', char: 'v'}],
   args: [{name: 'database', optional: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:ps --app murmuring-headland-14719
+     pid | state | source | username | running_for | transaction_start | waiting | query
+    -----+-------+--------+----------+-------------+-------------------+---------+-------
+`
 }

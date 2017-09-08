@@ -29,7 +29,16 @@ let cmd = {
     {name: 'credential', description: 'credential to use', hasValue: true}
   ],
   args: [{name: 'database', optional: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:psql --app murmuring-headland-14719
+    --> Connecting to postgresql-square-1337
+    psql (9.6.3, server 9.6.4)
+    SSL connection (protocol: TLSv1.2, cipher: ECDHE-RSA-AES256-GCM-SHA384, bits: 256, compression: off)
+    Type "help" for help.
+
+    murmuring-headland-14719::DATABASE=>`
 }
 
 module.exports = [

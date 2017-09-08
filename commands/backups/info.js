@@ -77,5 +77,8 @@ module.exports = {
   needsApp: true,
   needsAuth: true,
   args: [{name: 'backup_id', optional: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:backups:info 1ac8za1 --app murmuring-headland-14719`
 }

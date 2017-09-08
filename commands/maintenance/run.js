@@ -29,5 +29,9 @@ module.exports = {
   needsAuth: true,
   args: [{name: 'database', optional: true}],
   flags: [{name: 'force', char: 'f'}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+	help: `Example:
+
+    $ heroku pg:maintenance:run $PROD_DB_URL --app murmuring-headland-14719
+	`
 }

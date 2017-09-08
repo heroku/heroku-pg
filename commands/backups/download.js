@@ -53,5 +53,9 @@ module.exports = {
   flags: [
     {name: 'output', char: 'o', description: 'location to download to. Defaults to latest.dump', hasValue: true}
   ],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:backups:download 1ac8za1 --app murmuring-headland-14719
+    Getting backup from ⬢ murmuring-headland-14719... !`
 }

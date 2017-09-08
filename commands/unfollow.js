@@ -32,5 +32,8 @@ module.exports = {
   needsAuth: true,
   args: [{name: 'database'}],
   flags: [{name: 'confirm', char: 'c', hasValue: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:unfollow $DB_SLAVE --app murmuring-headland-14719`
 }

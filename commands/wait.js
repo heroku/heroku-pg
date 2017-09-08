@@ -62,5 +62,8 @@ module.exports = {
   needsAuth: true,
   args: [{name: 'database', optional: true}],
   flags: [{name: 'wait-interval', description: 'how frequently to poll in seconds (to avoid rate limiting)', hasValue: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:wait --app murmuring-headland-14719 --wait-interval 30ms`
 }
