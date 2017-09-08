@@ -10,27 +10,23 @@ function * run (context, heroku) {
   const {app, args, flags} = context
   let db = yield fetcher.addon(app, args.database)
   let all = flags.all
+  let warnings = []
+  let cred = flags.name || 'default'
 
   if (all && flags.name !== undefined) {
     throw new Error('cannot pass both --all and --name')
   }
-  let cred = flags.name || 'default'
-  if ((cred === 'default' || all) && flags.force) {
-    if (all) {
-      throw new Error('Cannot force rotate all credentials: the default credential cannot be force rotated.')
-    } else {
-      throw new Error('Cannot force rotate the default credential.')
-    }
-  }
   if (util.starterPlan(db) && cred !== 'default') {
     throw new Error(`Only one default credential is supported for Hobby tier databases.`)
+  }
+  if (all && flags.force) {
+    warnings.push('This forces rotation on all credentials including the default credential.')
   }
   let attachments = yield heroku.get(`/addons/${db.name}/addon-attachments`)
   if (flags.name) {
     attachments = attachments.filter(a => a.namespace === `credential:${cred}`)
   }
 
-  let warnings = []
   if (!flags.all) {
     warnings.push(`The password for the ${cred} credential will rotate.`)
   }
@@ -68,7 +64,7 @@ module.exports = {
   needsApp: true,
   needsAuth: true,
   flags: [
-    {name: 'name', char: 'n', description: 'which credentials to rotate (default credentials if not specified)', hasValue: true},
+    {name: 'name', char: 'n', description: 'which credential to rotate (default credentials if not specified)', hasValue: true},
     {name: 'all', description: 'rotate all credentials', hasValue: false},
     {name: 'confirm', char: 'c', hasValue: true},
     {name: 'force', description: 'forces rotating the targeted credentials', hasValue: false}

@@ -45,18 +45,6 @@ describe('pg:credentials', () => {
     api.done()
   })
 
-  // Old behaviour
-  it('runs query', () => {
-    // Returns an error for non-whitelisted databases
-    pg.get('/postgres/v0/databases/postgres-1/credentials').reply(422)
-    return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stdout, 'to equal', `Connection info string:
-   "dbname=mydb host=foo.com port=5432 user=jeff password=pass sslmode=require"
-Connection URL:
-   postgres://jeff:pass@foo.com/mydb
-`))
-  })
-
   it('resets credentials', () => {
     pg.post('/client/v11/databases/1/credentials_rotation').reply(200)
     return cmd.run({app: 'myapp', args: {}, flags: {reset: true}})
@@ -64,7 +52,6 @@ Connection URL:
     .then(() => expect(cli.stderr, 'to contain', 'Resetting credentials on postgres-1... done\n'))
   })
 
-  // Private beta behaviour
   it('shows the correct credentials', () => {
     let credentials = [
       { uuid: 'aaaa',
@@ -90,7 +77,7 @@ Connection URL:
         credentials: [
           {
             user: 'jeff',
-            connections: 5,
+            connections: 0,
             state: 'revoking'
           },
           {
@@ -133,7 +120,7 @@ jeff                                                                           r
  ├─ as HEROKU_POSTGRESQL_GREEN on main-app app
  └─ as HEROKU_POSTGRESQL_PINK on another-app app
        Usernames currently active for this credential:
-       jeff           waiting for no connections to be revoked  5 connections
+       jeff           waiting for no connections to be revoked  0 connections
        jeff-rotating  active                                    2 connections
 ransom                                                                         active
  └─ as HEROKU_POSTGRESQL_BLUE on yet-another-app app
