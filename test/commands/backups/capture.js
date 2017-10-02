@@ -42,9 +42,15 @@ const shouldCapture = function (cmdRun) {
       finished_at: '101',
       succeeded: true
     })
+
+    let dbA = {info: [
+      {name: 'Continuous Protection', values: ['On']}
+    ]}
+    pg.get('/client/v11/databases/1').reply(200, dbA)
+
     cli.mockConsole()
 
-    return cmdRun({app: 'myapp', args: {}, flags: {}})
+    return cmdRun({app: 'myapp', args: {}, flags: {confirm: 'myapp'}})
     .then(() => expect(cli.stdout, 'to equal', `
 Use Ctrl-C at any time to stop monitoring progress; the backup will continue running.
 Use heroku pg:backups:info to check progress.
@@ -70,9 +76,15 @@ Stop a running backup with heroku pg:backups:cancel.
       succeeded: true,
       logs: [{created_at: '100', message: 'log message 1'}]
     })
+
+    let dbA = {info: [
+      {name: 'Continuous Protection', values: ['On']}
+    ]}
+    pg.get('/client/v11/databases/1').reply(200, dbA)
+
     cli.mockConsole()
 
-    return cmdRun({app: 'myapp', args: {}, flags: {verbose: true}})
+    return cmdRun({app: 'myapp', args: {}, flags: {verbose: true, confirm: 'myapp'}})
     .then(() => expect(cli.stdout, 'to equal', `
 Use Ctrl-C at any time to stop monitoring progress; the backup will continue running.
 Use heroku pg:backups:info to check progress.
@@ -101,9 +113,15 @@ Backing up DATABASE to b005...
       succeeded: true,
       logs: [{created_at: '100', message: 'log message 1'}]
     })
+
+    let dbA = {info: [
+      {name: 'Continuous Protection', values: ['On']}
+    ]}
+    pg.get('/client/v11/databases/1').reply(200, dbA)
+
     cli.mockConsole()
 
-    return cmdRun({app: 'myapp', args: {}, flags: {verbose: true}})
+    return cmdRun({app: 'myapp', args: {}, flags: {verbose: true, confirm: 'myapp'}})
     .then(() => expect(cli.stdout, 'to equal', `
 Use Ctrl-C at any time to stop monitoring progress; the backup will continue running.
 Use heroku pg:backups:info to check progress.

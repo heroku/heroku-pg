@@ -25,9 +25,6 @@ const shouldSchedule = function (cmdRun) {
     ])
 
     let dbA = {info: [
-      {name: 'Plan', values: ['Hobby-dev']},
-      {name: 'Empty', values: []},
-      {name: 'Following', resolve_db_name: true, values: ['postgres://ec2-54-111-111-1.compute-1.amazonaws.com:5452/dxxxxxxxxxxxx']},
       {name: 'Continuous Protection', values: ['On']}
     ]}
     pg = nock('https://postgres-api.heroku.com')
