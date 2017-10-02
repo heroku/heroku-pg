@@ -41,6 +41,22 @@ function * run (context, heroku) {
 
   let at = cli.color.cyan(`${schedule.hour}:00 ${schedule.timezone}`)
 
+  let dbInfo = yield heroku.request({
+    host: host(db),
+    method: 'get',
+    path: `/client/v11/databases/${db.id}`
+  }).catch(err => {
+    if (err.statusCode !== 404) throw err
+    cli.warn(`${cli.color.addon(db.name)} is not yet provisioned.\nRun ${cli.color.cmd('heroku addons:wait')} to wait until the db is provisioned.`)
+  })
+
+  if (dbInfo) {
+    let dbProtected = /On/.test(dbInfo.info.find(attribute => attribute.name === 'Continuous Protection').values[0])
+    if (dbProtected) {
+      yield cli.confirmApp(app, flags.confirm, 'Continuous protection is already enabled for this database. Logical backups of large databases are likely to timeout. Are you sure?')
+    }
+  }
+
   yield cli.action(`Scheduling automatic daily backups of ${cli.color.addon(db.name)} at ${at}`, co(function * () {
     schedule.schedule_name = util.getUrl(attachment.config_vars)
 
@@ -61,7 +77,8 @@ module.exports = {
     {name: 'database', optional: true}
   ],
   flags: [
-    {name: 'at', required: true, hasValue: true, description: "at a specific (24h) hour in the given timezone. Defaults to UTC. --at '[HOUR]:00 [TIMEZONE]'"}
+    {name: 'at', required: true, hasValue: true, description: "at a specific (24h) hour in the given timezone. Defaults to UTC. --at '[HOUR]:00 [TIMEZONE]'"},
+    {name: 'confirm', char: 'c', hasValue: true}
   ],
   run: cli.command({preauth: true}, co.wrap(run))
 }

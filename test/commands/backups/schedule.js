@@ -23,7 +23,16 @@ const shouldSchedule = function (cmdRun) {
         ]
       }
     ])
+
+    let dbA = {info: [
+      {name: 'Plan', values: ['Hobby-dev']},
+      {name: 'Empty', values: []},
+      {name: 'Following', resolve_db_name: true, values: ['postgres://ec2-54-111-111-1.compute-1.amazonaws.com:5452/dxxxxxxxxxxxx']},
+      {name: 'Continuous Protection', values: ['On']}
+    ]}
     pg = nock('https://postgres-api.heroku.com')
+    pg.get('/client/v11/databases/1').reply(200, dbA)
+
     cli.mockConsole()
   })
 
@@ -37,7 +46,7 @@ const shouldSchedule = function (cmdRun) {
     pg.post('/client/v11/databases/1/transfer-schedules', {
       'hour': '06', 'timezone': 'America/New_York', 'schedule_name': 'DATABASE_URL'
     }).reply(201)
-    return cmdRun({app: 'myapp', args: {}, flags: {at: '06:00 EDT'}})
+    return cmdRun({app: 'myapp', args: {}, flags: {at: '06:00 EDT', confirm: 'myapp'}})
     .then(() => expect(cli.stdout, 'to equal', ''))
     .then(() => expect(cli.stderr, 'to equal', 'Scheduling automatic daily backups of postgres-1 at 06:00 America/New_York... done\n'))
   })
