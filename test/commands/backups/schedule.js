@@ -45,7 +45,7 @@ const shouldSchedule = function (cmdRun) {
     }).reply(201)
     return cmdRun({app: 'myapp', args: {}, flags: {at: '06:00 EDT', confirm: 'myapp'}})
     .then(() => expect(cli.stdout, 'to equal', ''))
-    .then(() => expect(cli.stderr, 'to equal', 'Scheduling automatic daily backups of postgres-1 at 06:00 America/New_York... done\n'))
+    .then(() => expect(cli.stderr, 'to match', /Scheduling automatic daily backups of postgres-1 at 06:00 America\/New_York... done\n/))
   })
 }
 
