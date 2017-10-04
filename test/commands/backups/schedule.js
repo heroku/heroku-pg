@@ -51,7 +51,6 @@ const shouldSchedule = function (cmdRun) {
     let dbA = {info: [
       {name: 'Continuous Protection', values: ['On']}
     ]}
-    pg = nock('https://postgres-api.heroku.com')
     pg.get('/client/v11/databases/1').reply(200, dbA)
 
     return cmdRun({app: 'myapp', args: {}, flags: {at: '06:00 EDT'}})
@@ -62,7 +61,6 @@ const shouldSchedule = function (cmdRun) {
     let dbA = {info: [
       {name: 'Continuous Protection', values: ['Off']}
     ]}
-    // pg = nock('https://postgres-api.heroku.com')
     pg.get('/client/v11/databases/1').reply(200, dbA)
 
     return cmdRun({app: 'myapp', args: {}, flags: {at: '06:00 EDT'}})
