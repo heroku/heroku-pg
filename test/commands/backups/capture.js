@@ -58,6 +58,7 @@ Stop a running backup with heroku pg:backups:cancel.
 
 `))
     .then(() => expect(cli.stderr, 'to match', new RegExp(`Starting backup of postgres-1... done\n${captureText()}`)))
+    .then(() => expect(cli.stderr, 'to match', new RegExp(`backups of large databases are likely to fail`)))
   })
 
   it('captures a db (verbose)', () => {
@@ -78,7 +79,7 @@ Stop a running backup with heroku pg:backups:cancel.
     })
 
     let dbA = {info: [
-      {name: 'Continuous Protection', values: ['On']}
+      {name: 'Continuous Protection', values: ['Off']}
     ]}
     pg.get('/client/v11/databases/1').reply(200, dbA)
 
@@ -94,7 +95,7 @@ Backing up DATABASE to b005...
 100 log message 1
 `))
     .then(() => expect(cli.stderr, 'to match', new RegExp(`Starting backup of postgres-1... done
-`)))
+`))).then(() => expect(cli.stderr, 'not to match', new RegExp(`backups of large databases are likely to fail`)))
   })
 
   it('captures a db (verbose) with non billing app', () => {
@@ -134,7 +135,7 @@ Backing up DATABASE to b005...
 100 log message 1
 `))
     .then(() => expect(cli.stderr, 'to match', new RegExp(`Starting backup of postgres-1... done
-`)))
+`))).then(() => expect(cli.stderr, 'to match', new RegExp(`backups of large databases are likely to fail`)))
   })
 
   it('captures a snapshot if called with the --snapshot flag', () => {
@@ -144,6 +145,7 @@ Backing up DATABASE to b005...
 
     pg = nock('https://postgres-api.heroku.com')
     pg.post('/postgres/v0/databases/1/snapshots').reply(200, {})
+
     cli.mockConsole()
 
     return cmdRun({app: 'myapp', args: {}, flags: {snapshot: true}})
