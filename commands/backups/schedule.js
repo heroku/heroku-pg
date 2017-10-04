@@ -77,8 +77,7 @@ module.exports = {
     {name: 'database', optional: true}
   ],
   flags: [
-    {name: 'at', required: true, hasValue: true, description: "at a specific (24h) hour in the given timezone. Defaults to UTC. --at '[HOUR]:00 [TIMEZONE]'"},
-    {name: 'confirm', char: 'c', hasValue: true}
+    {name: 'at', required: true, hasValue: true, description: "at a specific (24h) hour in the given timezone. Defaults to UTC. --at '[HOUR]:00 [TIMEZONE]'"}
   ],
   run: cli.command({preauth: true}, co.wrap(run))
 }
