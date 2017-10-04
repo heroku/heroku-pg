@@ -44,6 +44,7 @@ exports.commands = flatten([
   require('./commands/settings/log_lock_waits'),
   require('./commands/settings/log_min_duration_statement'),
   require('./commands/settings/log_statement'),
+  require('./commands/pgbouncer/install'),
   require('./commands/unfollow'),
   require('./commands/upgrade'),
   require('./commands/wait')
