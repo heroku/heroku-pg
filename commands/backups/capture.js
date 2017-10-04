@@ -28,7 +28,8 @@ function * run (context, heroku) {
     if (dbInfo) {
       let dbProtected = /On/.test(dbInfo.info.find(attribute => attribute.name === 'Continuous Protection').values[0])
       if (dbProtected) {
-        cli.warn('Continuous protection is already enabled for this database. Logical backups of large databases are likely to fail. See https://devcenter.heroku.com/articles/heroku-postgres-data-safety-and-continuous-protection#physical-backups-on-heroku-postgres.')
+        cli.warn('Continuous protection is already enabled for this database. Logical backups of large databases are likely to fail.')
+        cli.warn('See https://devcenter.heroku.com/articles/heroku-postgres-data-safety-and-continuous-protection#physical-backups-on-heroku-postgres.')
       }
     }
     let backup
