@@ -25,7 +25,6 @@ function * run (context, heroku) {
       if (err.statusCode !== 404) throw err
       cli.exit(1, `${cli.color.addon(db.name)} is not yet provisioned.\nRun ${cli.color.cmd('heroku addons:wait')} to wait until the db is provisioned.`)
     })
-    console.log(dbInfo.info)
     if (dbInfo) {
       let dbProtected = /On/.test(dbInfo.info.find(attribute => attribute.name === 'Continuous Protection').values[0])
       if (dbProtected) {
