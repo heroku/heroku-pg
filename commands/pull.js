@@ -168,7 +168,7 @@ function * pull (context, heroku) {
 
   const source = yield fetcher.database(app, args.source)
   const target = parseURL(args.target)
-  
+
   cli.log(`heroku-cli: Pulling ${cli.color.addon(source.attachment.addon.name)} ---> ${cli.color.cyan(args.target)}`)
   yield run(source, target, exclusions)
   cli.log('heroku-cli: Pulling complete.')
