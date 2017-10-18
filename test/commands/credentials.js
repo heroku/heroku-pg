@@ -45,11 +45,13 @@ describe('pg:credentials', () => {
     api.done()
   })
 
-  it('resets credentials', () => {
-    pg.post('/client/v11/databases/1/credentials_rotation').reply(200)
+  it('errors if --reset is used', () => {
     return cmd.run({app: 'myapp', args: {}, flags: {reset: true}})
-    .then(() => expect(cli.stdout, 'to equal', ''))
-    .then(() => expect(cli.stderr, 'to contain', 'Resetting credentials on postgres-1... done\n'))
+      .catch(err => {
+        if (err.code !== 1) throw err
+        expect(cli.stdout, 'to equal', '')
+        expect(cli.stderr, 'to equal', ' ▸    this is an error message\n')
+      })
   })
 
   it('shows the correct credentials', () => {
