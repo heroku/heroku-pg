@@ -180,7 +180,7 @@ let cmd = {
   needsAuth: true,
   args: [{name: 'source'}, {name: 'target'}],
   flags: [
-    {name: 'exclude', char: 'e', hasValue: true, description: 'tables for which data should be excluded (use \';\' to split multiple names)'}
+    {name: 'exclude-table-data', hasValue: true, description: 'tables for which data should be excluded (use \';\' to split multiple names)'}
   ],
 }
 
