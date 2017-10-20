@@ -150,7 +150,7 @@ function * push (context, heroku) {
   const fetcher = require('../lib/fetcher')(heroku)
   const {app, args} = context
   const flags = context.flags
-  const exclusions = parseExclusions(flags['exclude'])
+  const exclusions = parseExclusions(flags['exclude-table-data'])
 
   const source = parseURL(args.source)
   const target = yield fetcher.database(app, args.target)
@@ -164,7 +164,7 @@ function * pull (context, heroku) {
   const fetcher = require('../lib/fetcher')(heroku)
   const {app, args} = context
   const flags = context.flags
-  const exclusions = parseExclusions(flags['exclude'])
+  const exclusions = parseExclusions(flags['exclude-table-data'])
 
   const source = yield fetcher.database(app, args.source)
   const target = parseURL(args.target)
