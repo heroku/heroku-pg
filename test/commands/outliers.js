@@ -16,7 +16,7 @@ const fetcher = () => {
 const psql = {
   exec: function (db, query) {
     this._query = query
-    return Promise.resolve('')
+    return Promise.resolve('t')
   }
 }
 

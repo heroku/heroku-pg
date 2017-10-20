@@ -19,7 +19,6 @@ This extension is only available on Postgres versions 9.2 or greater. You can in
   }
 }
 
-
 function * run (context, heroku) {
   const fetcher = require('../lib/fetcher')
 
