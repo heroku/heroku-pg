@@ -14,8 +14,7 @@ SELECT exists(
 
   if (!output.includes('t')) {
     throw new Error(`pg_stat_statements extension need to be installed in the public schema first.
-This extension is only available on Postgres versions 9.2 or greater. You can install it by running:
-    CREATE EXTENSION pg_stat_statements;`)
+You can install it by running: CREATE EXTENSION pg_stat_statements;`)
   }
 }
 
