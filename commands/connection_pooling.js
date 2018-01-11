@@ -19,7 +19,7 @@ function * run (context, heroku) {
       name: as,
       app: {name: app},
       addon: {name: addon.name},
-      namespace: `connection-pooling:${credential}`,
+      namespace: `connection-pooling:${credential}`
     }
     return cli.action(
       `Attaching ${credential ? cli.color.addon(credential) + ' of ' : ''}${cli.color.addon(addon.name)}${as ? ' as ' + cli.color.attachment(as) : ''} to ${cli.color.app(app)}`,
