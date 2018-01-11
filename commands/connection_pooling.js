@@ -14,13 +14,12 @@ function * run (context, heroku) {
   let db = yield fetcher.addon(app, args.database)
   if (util.starterPlan(db)) throw new Error('This operation is not supported by Hobby tier databases.')
 
-  function createAttachment (app, as, confirm, credential) {
+  function createAttachment (app, as, credential) {
     let body = {
       name: as,
       app: {name: app},
       addon: {name: addon.name},
       namespace: `connection-pooling:${credential}`,
-      confirm
     }
     return cli.action(
       `Attaching ${credential ? cli.color.addon(credential) + ' of ' : ''}${cli.color.addon(addon.name)}${as ? ' as ' + cli.color.attachment(as) : ''} to ${cli.color.app(app)}`,
@@ -51,7 +50,7 @@ function * run (context, heroku) {
     throw new Error(`Could not find credential ${credential} with connection pooling for database ${addon.name}`)
   }
 
-  let attachment = yield util.trapConfirmationRequired(app, flags.confirm, (confirm) => createAttachment(app, flags.as, confirm, credential))
+  let attachment = yield createAttachment(app, flags.as, credential)
 
   yield cli.action(
     `Setting ${cli.color.attachment(attachment.name)} config vars and restarting ${cli.color.app(app)}`,
