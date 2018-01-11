@@ -32,7 +32,7 @@ function * run (context, heroku) {
     )
   }
 
-  let pgbouncerConfig = yield heroku.request({ host: host(addon), method: 'get', path: `/client/v11/databases/${addon.id}/pgbouncer_status`})
+  let pgbouncerConfig = yield heroku.request({host: host(addon), method: 'get', path: `/client/v11/databases/${addon.id}/pgbouncer_status`})
   if (pgbouncerConfig.status === 'disabled') {
     throw new Error(`The database ${addon.name} does not have connection pooling enabled`)
   }

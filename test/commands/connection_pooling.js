@@ -1,5 +1,5 @@
 'use strict'
-/* global describe it beforeEach afterEach */
+/* global describe it beforeEach afterEach context */
 
 const cli = require('heroku-cli-util')
 const expect = require('unexpected')
@@ -74,7 +74,7 @@ describe('pg:connection-polling:attach', () => {
     })
 
     it('throws an error if the credential does not exist', () => {
-      name = "no-user"
+      name = 'no-user'
       api.get(`/addons/postgres-1/config/credential:${name}`).reply(200, [])
 
       const err = new Error('Could not find credential no-user for database postgres-1')
