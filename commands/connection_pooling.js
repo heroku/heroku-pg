@@ -2,6 +2,7 @@
 
 const co = require('co')
 const cli = require('heroku-cli-util')
+const host = require('../lib/host')
 
 function * run (context, heroku) {
   const util = require('../lib/util')
@@ -18,7 +19,7 @@ function * run (context, heroku) {
       name: as,
       app: {name: app},
       addon: {name: addon.name},
-      namespace: `connection-pooling:${credential || 'default'}`,
+      namespace: `connection-pooling:${credential}`,
       confirm
     }
     return cli.action(
@@ -31,18 +32,26 @@ function * run (context, heroku) {
     )
   }
 
-  if (flags.credential && flags.credential !== 'default') {
-    let credentialConfig = yield heroku.get(`/addons/${addon.name}/config/credential:${encodeURIComponent(flags.credential)}`)
+  let pgbouncerConfig = yield heroku.request({ host: host(addon), method: 'get', path: `/client/v11/databases/${addon.id}/pgbouncer_status`})
+  if (pgbouncerConfig.status === 'disabled') {
+    throw new Error(`The database ${addon.name} does not have connection pooling enabled`)
+  }
+
+  let credential = `${flags.credential || 'default'}`
+
+  if (credential !== 'default') {
+    let credentialConfig = yield heroku.get(`/addons/${addon.name}/config/credential:${encodeURIComponent(credential)}`)
     if (credentialConfig.length === 0) {
-      throw new Error(`Could not find credential ${flags.credential} for database ${addon.name}`)
-    }
-    let poolingConfig = yield heroku.get(`/addons/${addon.name}/config/connection-pooling:${encodeURIComponent(flags.credential)}`)
-    if (poolingConfig.length === 0) {
-      throw new Error(`Could not find credential ${flags.credential} with connection pooling for database ${addon.name}`)
+      throw new Error(`Could not find credential ${credential} for database ${addon.name}`)
     }
   }
 
-  let attachment = yield util.trapConfirmationRequired(app, flags.confirm, (confirm) => createAttachment(app, flags.as, confirm, flags.credential))
+  let poolingConfig = yield heroku.get(`/addons/${addon.name}/config/connection-pooling:${encodeURIComponent(credential)}`)
+  if (poolingConfig.length === 0) {
+    throw new Error(`Could not find credential ${credential} with connection pooling for database ${addon.name}`)
+  }
+
+  let attachment = yield util.trapConfirmationRequired(app, flags.confirm, (confirm) => createAttachment(app, flags.as, confirm, credential))
 
   yield cli.action(
     `Setting ${cli.color.attachment(attachment.name)} config vars and restarting ${cli.color.app(app)}`,
