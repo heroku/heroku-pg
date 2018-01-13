@@ -20,6 +20,8 @@ const addon = {
   plan: {name: 'heroku-postgresql:standard-0'}
 }
 
+const credential = "default"
+
 const fetcher = () => {
   return {
     database: () => db,
@@ -53,7 +55,7 @@ describe('pg:connection-polling:attach', () => {
 
   context('with pgbouncer enabled', () => {
     beforeEach(() => {
-      pg.get(`/client/v11/databases/${addon.id}/pgbouncer_status`).reply(200, {status: 'enabled'})
+      pg.post(`/client/v11/databases/${addon.id}/connection-pooling/credentials/${credential}`).reply(200, {status: 'enabled'})
     })
 
     it('attaches the pgbouncer url', () => {
@@ -83,7 +85,7 @@ describe('pg:connection-polling:attach', () => {
   })
 
   it('throws an error if the formation does not pgbouncer setup', () => {
-    pg.get(`/client/v11/databases/${addon.id}/pgbouncer_status`).reply(200, {status: 'disabled'})
+    pg.post(`/client/v11/databases/${addon.id}/connection-pooling/credentials/${credential}`).reply(200, {status: 'disabled'})
 
     const err = new Error('The database postgres-1 does not have connection pooling enabled')
     return expect(cmd.run({app: 'myapp', args: {database: 'postgres-1'}, flags: {credential: name}}), 'to be rejected with', err)

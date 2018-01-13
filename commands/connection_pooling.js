@@ -15,33 +15,14 @@ function * run (context, heroku) {
 
   if (util.starterPlan(db)) throw new Error('This operation is not supported by Hobby tier databases.')
 
-  function activatePoolCredential(db, credential) {
-    return heroku.request({
+  let attachment = yield cli.action(
+    `Enabling Connection Pooling for credential ${cli.color.addon(credential)} on ${cli.color.addon(addon.name)} to ${cli.color.app(app)}`,
+    heroku.request({
       host: host(db),
       method: 'POST',
       path: `/client/v11/databases/${db.name}/connection-pooling/credentials/${credential}`
     })
-  }
-
-  function createAttachment (addon, app, db, credential) {
-    let attachmentParams = {
-      app: { name: app },
-      addon: { name: addon.name },
-      namespace: `connection-pooling:${credential}`
-    }
-
-    return cli.action(
-      `Enabling Connection Pooling for credential ${cli.color.addon(credential)} on ${cli.color.addon(addon.name)} to ${cli.color.app(app)}`,
-      heroku.request({
-        path: '/addon-attachments',
-        method: 'POST',
-        body: attachmentParams
-      })
-    )
-  }
-
-  let pool = yield activatePoolCredential(db, credential)
-  let attachment = yield createAttachment(addon, app, db, credential)
+  )
 
   yield cli.action(
     `Setting ${cli.color.attachment(attachment.name)} config vars and restarting ${cli.color.app(app)}`,
