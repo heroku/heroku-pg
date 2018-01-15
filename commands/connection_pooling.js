@@ -17,11 +17,9 @@ function * run (context, heroku) {
 
   let attachment = yield cli.action(
     `Enabling Connection Pooling${credential == "default" ? "" : " for credential " + cli.color.addon(credential)} on ${cli.color.addon(addon.name)} to ${cli.color.app(app)}`,
-    heroku.request({
-      host: host(db),
-      method: 'POST',
-      path: `/client/v11/databases/${db.name}/connection-pooling`,
-      body: { credential: credential }
+    heroku.post(`/client/v11/databases/${db.name}/connection-pooling`, {
+      body: { credential: credential },
+      host: host(db)
     })
   )
 
