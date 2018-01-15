@@ -20,8 +20,6 @@ const addon = {
   plan: {name: 'heroku-postgresql:standard-0'}
 }
 
-const credential = "default"
-
 const fetcher = () => {
   return {
     database: () => db,
@@ -55,7 +53,7 @@ describe('pg:connection-polling:attach', () => {
   context('with pgbouncer enabled', () => {
     beforeEach(() => {
       pg.post(`/client/v11/databases/${addon.name}/connection-pooling`, {
-        credential: credential
+        credential: name
       }).reply(201, {name: 'HEROKU_COLOR'})
     })
 

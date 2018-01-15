@@ -16,7 +16,7 @@ function * run (context, heroku) {
   if (util.starterPlan(db)) throw new Error('This operation is not supported by Hobby tier databases.')
 
   let attachment = yield cli.action(
-    `Enabling Connection Pooling${credential == "default" ? "" : " for credential " + cli.color.addon(credential)} on ${cli.color.addon(addon.name)} to ${cli.color.app(app)}`,
+    `Enabling Connection Pooling${credential === 'default' ? '' : ' for credential ' + cli.color.addon(credential)} on ${cli.color.addon(addon.name)} to ${cli.color.app(app)}`,
     heroku.post(`/client/v11/databases/${db.name}/connection-pooling`, {
       body: { credential: credential },
       host: host(db)
