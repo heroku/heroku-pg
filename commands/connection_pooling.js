@@ -18,7 +18,7 @@ function * run (context, heroku) {
   let attachment = yield cli.action(
     `Enabling Connection Pooling${credential === 'default' ? '' : ' for credential ' + cli.color.addon(credential)} on ${cli.color.addon(addon.name)} to ${cli.color.app(app)}`,
     heroku.post(`/client/v11/databases/${db.name}/connection-pooling`, {
-      body: { credential: credential },
+      body: { name: flags.as, credential: credential },
       host: host(db)
     })
   )
@@ -47,6 +47,9 @@ module.exports = {
   heroku pg:connection-pooling:attach postgresql-something-12345 --credential cred-name
 `,
   args: [{name: 'database', optional: true}],
-  flags: [{name: 'credential', char: 'n', hasValue: true, required: false, description: 'name of the credential within the database'}],
+  flags: [
+    {name: 'as', description: 'name for add-on attachment', hasValue: true},
+    {name: 'credential', char: 'n', hasValue: true, required: false, description: 'name of the credential within the database'}
+  ],
   run: cli.command({preauth: true}, co.wrap(run))
 }
