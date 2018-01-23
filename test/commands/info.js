@@ -36,6 +36,7 @@ describe('pg', () => {
 
   context('with 0 dbs', () => {
     it('shows empty state', () => {
+      api.get('/apps/myapp/config-vars').reply(200, {})
       all = []
 
       return cmd.run({app: 'myapp', args: {}})
