@@ -22,7 +22,7 @@ const shouldRestore = function (cmdRun) {
     api.post('/actions/addon-attachments/resolve', {
       app: 'myapp',
       addon_attachment: 'DATABASE_URL',
-      addon_service: 'heroku-postgresql',
+      addon_service: 'heroku-postgresql'
     }).reply(200, [{addon}])
 
     pg = nock('https://postgres-api.heroku.com')

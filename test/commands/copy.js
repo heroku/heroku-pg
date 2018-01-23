@@ -48,7 +48,7 @@ describe('pg:copy', () => {
       api.post('/actions/addon-attachments/resolve', {
         app: 'myapp',
         addon_attachment: 'DATABASE_URL',
-        addon_service: 'heroku-postgresql',
+        addon_service: 'heroku-postgresql'
       }).reply(200, [attachment])
       api.get('/apps/myapp/config-vars').reply(200, {DATABASE_URL: 'postgres://heroku/db'})
       pg.post('/client/v11/databases/1/transfers', {
@@ -73,7 +73,7 @@ describe('pg:copy', () => {
       api.post('/actions/addon-attachments/resolve', {
         app: 'myapp',
         addon_attachment: 'DATABASE_URL',
-        addon_service: 'heroku-postgresql',
+        addon_service: 'heroku-postgresql'
       }).reply(200, [attachment])
       api.get('/apps/myapp/config-vars').reply(200, {DATABASE_URL: 'postgres://heroku/db'})
       pg.post('/client/v11/databases/1/transfers', {

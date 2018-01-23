@@ -24,7 +24,7 @@ const shouldUnschedule = function (cmdRun) {
     api.post('/actions/addon-attachments/resolve', {
       app: 'myapp',
       addon_attachment: 'DATABASE_URL',
-      addon_service: 'heroku-postgresql',
+      addon_service: 'heroku-postgresql'
     }).reply(200, [attachment])
     pg = nock('https://postgres-api.heroku.com')
     pg.get('/client/v11/databases/1/transfer-schedules').twice().reply(200, [{name: 'DATABASE_URL', uuid: '100-001'}])
