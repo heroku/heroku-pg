@@ -7,6 +7,7 @@ function * run (context, heroku) {
   const fetcher = require('../lib/fetcher')(heroku)
   const {app, args} = context
   const attachment = yield fetcher.attachment(app, args.database)
+  let hasCurrent = false
 
   yield cli.action(`Ensuring an alternate alias for existing ${cli.color.configVar('DATABASE_URL')}`, co(function * () {
     // Finds or creates a non-DATABASE attachment for the DB currently
@@ -18,6 +19,8 @@ function * run (context, heroku) {
     let attachments = yield heroku.get(`/apps/${app}/addon-attachments`)
     let current = attachments.find(a => a.name === 'DATABASE')
     if (!current) return
+    hasCurrent = true
+
     if (current.addon.name === attachment.addon.name && current.namespace === attachment.namespace) {
       if (attachment.namespace) {
         throw new Error(`${cli.color.attachment(attachment.name)} is already promoted on ${cli.color.app(app)}`)
@@ -49,6 +52,8 @@ function * run (context, heroku) {
   } else {
     promotionMessage = `Promoting ${cli.color.addon(attachment.addon.name)} to ${cli.color.configVar('DATABASE_URL')} on ${cli.color.app(app)}`
   }
+
+  cli.warn('Detaching DATABASE. If you are using the release phase feature (https://devcenter.heroku.com/articles/release-phase), this can cause a failed release.')
 
   yield cli.action(promotionMessage, co(function * () {
     yield heroku.post('/addon-attachments', {

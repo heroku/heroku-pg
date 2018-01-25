@@ -6,6 +6,13 @@ const expect = require('unexpected')
 const nock = require('nock')
 const proxyquire = require('proxyquire')
 
+const expectedMessage = `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
+ ▸    Detaching DATABASE. If you are using the release phase feature
+ ▸    (https://devcenter.heroku.com/articles/release-phase), this can cause a
+ ▸    failed release.
+Promoting PURPLE to DATABASE_URL on myapp... done
+`
+
 describe('pg:promote when argument is database', () => {
   let api
 
@@ -54,15 +61,13 @@ describe('pg:promote when argument is database', () => {
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
-Promoting postgres-1 to DATABASE_URL on myapp... done
-`))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage.replace("PURPLE", "postgres-1")))
   })
 
   it('promotes the db and does not create another attachment if current DATABASE has another', () => {
     api.get('/apps/myapp/addon-attachments').reply(200, [
       {name: 'DATABASE', addon: {name: 'postgres-2'}, namespace: null},
-      {name: 'PURPLE', addon: {name: 'postgres-2'}, namespace: null}
+      {name: 'RED', addon: {name: 'postgres-2'}, namespace: null}
     ])
     api.post('/addon-attachments', {
       name: 'DATABASE',
@@ -72,9 +77,7 @@ Promoting postgres-1 to DATABASE_URL on myapp... done
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... PURPLE_URL
-Promoting postgres-1 to DATABASE_URL on myapp... done
-`))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage.replace("PURPLE", "postgres-1")))
   })
 
   it('does not promote the db if is already is DATABASE', () => {
@@ -119,7 +122,7 @@ describe('pg:promote when argument is a credential attachment', () => {
   it('promotes the credential and creates another attachment if current DATABASE does not have another', () => {
     api.get('/apps/myapp/addon-attachments').reply(200, [
       {name: 'DATABASE', addon: {name: 'postgres-2'}},
-      {name: 'PURPLE', addon: {name: 'postgres-1'}, namespace: 'credential:hello'}
+      {name: 'RED', addon: {name: 'postgres-1'}, namespace: 'credential:hello'}
     ])
     api.post('/addon-attachments', {
       app: {name: 'myapp'},
@@ -134,9 +137,7 @@ describe('pg:promote when argument is a credential attachment', () => {
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
-Promoting PURPLE to DATABASE_URL on myapp... done
-`))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage.replace("postgres-1", "PURPLE")))
   })
 
   it('promotes the credential and creates another attachment if current DATABASE does not have another and current DATABASE is a credential', () => {
@@ -158,15 +159,13 @@ Promoting PURPLE to DATABASE_URL on myapp... done
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
-Promoting PURPLE to DATABASE_URL on myapp... done
-`))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage))
   })
 
   it('promotes the credential and does not create another attachment if current DATABASE has another', () => {
     api.get('/apps/myapp/addon-attachments').reply(200, [
       {name: 'DATABASE', addon: {name: 'postgres-2'}},
-      {name: 'BLUE', addon: {name: 'postgres-2'}},
+      {name: 'RED', addon: {name: 'postgres-2'}},
       {name: 'PURPLE', addon: {name: 'postgres-1'}, namespace: 'credential:hello'}
     ])
     api.post('/addon-attachments', {
@@ -177,9 +176,7 @@ Promoting PURPLE to DATABASE_URL on myapp... done
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... BLUE_URL
-Promoting PURPLE to DATABASE_URL on myapp... done
-`))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage))
   })
 
   it('promotes the credential if the current promoted database is for the same addon, but the default credential', () => {
@@ -196,9 +193,7 @@ Promoting PURPLE to DATABASE_URL on myapp... done
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
-Promoting PURPLE to DATABASE_URL on myapp... done
-`))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage))
   })
 
   it('promotes the credential if the current promoted database is for the same addon, but the default credential', () => {
@@ -215,9 +210,7 @@ Promoting PURPLE to DATABASE_URL on myapp... done
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
-Promoting PURPLE to DATABASE_URL on myapp... done
-`))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage))
   })
 
   it('promotes the credential if the current promoted database is for the same addon, but another credential', () => {
@@ -234,9 +227,7 @@ Promoting PURPLE to DATABASE_URL on myapp... done
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
-Promoting PURPLE to DATABASE_URL on myapp... done
-`))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage))
   })
 
   it('does not promote the credential if it already is DATABASE', () => {
@@ -249,3 +240,4 @@ Promoting PURPLE to DATABASE_URL on myapp... done
     return expect(cmd.run({app: 'myapp', args: {}, flags: {}}), 'to be rejected with', err)
   })
 })
+
