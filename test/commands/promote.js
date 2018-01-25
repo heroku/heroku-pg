@@ -62,7 +62,7 @@ describe('pg:promote when argument is database', () => {
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', expectedMessage.replace("PURPLE", "postgres-1")))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage.replace('PURPLE', 'postgres-1')))
   })
 
   it('promotes the db and does not create another attachment if current DATABASE has another', () => {
@@ -78,7 +78,7 @@ describe('pg:promote when argument is database', () => {
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', expectedMessage.replace("PURPLE", "postgres-1")))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage.replace('PURPLE', 'postgres-1')))
   })
 
   it('does not promote the db if is already is DATABASE', () => {
@@ -138,7 +138,7 @@ describe('pg:promote when argument is a credential attachment', () => {
       confirm: 'myapp'
     }).reply(201)
     return cmd.run({app: 'myapp', args: {}, flags: {}})
-    .then(() => expect(cli.stderr, 'to equal', expectedMessage.replace("postgres-1", "PURPLE")))
+    .then(() => expect(cli.stderr, 'to equal', expectedMessage.replace('postgres-1', 'PURPLE')))
   })
 
   it('promotes the credential and creates another attachment if current DATABASE does not have another and current DATABASE is a credential', () => {
