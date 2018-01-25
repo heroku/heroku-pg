@@ -53,7 +53,9 @@ function * run (context, heroku) {
     promotionMessage = `Promoting ${cli.color.addon(attachment.addon.name)} to ${cli.color.configVar('DATABASE_URL')} on ${cli.color.app(app)}`
   }
 
-  cli.warn('Detaching DATABASE. If you are using the release phase feature (https://devcenter.heroku.com/articles/release-phase), this can cause a failed release.')
+  if (hasCurrent) {
+    cli.warn('Detaching DATABASE. If you are using the release phase feature (https://devcenter.heroku.com/articles/release-phase), pg:promote can cause a failed release. Please double checkthe releases and make sure the database is properly promoted.')
+  }
 
   yield cli.action(promotionMessage, co(function * () {
     yield heroku.post('/addon-attachments', {

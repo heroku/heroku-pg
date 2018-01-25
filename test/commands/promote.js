@@ -8,8 +8,9 @@ const proxyquire = require('proxyquire')
 
 const expectedMessage = `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
  ▸    Detaching DATABASE. If you are using the release phase feature
- ▸    (https://devcenter.heroku.com/articles/release-phase), this can cause a
- ▸    failed release.
+ ▸    (https://devcenter.heroku.com/articles/release-phase), pg:promote can
+ ▸    cause a failed release. Please double checkthe releases and make sure the
+ ▸    database is properly promoted.
 Promoting PURPLE to DATABASE_URL on myapp... done
 `
 
@@ -240,4 +241,3 @@ describe('pg:promote when argument is a credential attachment', () => {
     return expect(cmd.run({app: 'myapp', args: {}, flags: {}}), 'to be rejected with', err)
   })
 })
-
