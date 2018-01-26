@@ -313,4 +313,9 @@ describe('pg:promote when release phase is present', () => {
     return cmd.run({app: 'myapp', args: {}, flags: {}})
         .then(() => expect(cli.stderr, 'to equal', expectedMessage + 'Checking release phase... pg:promote failed because Attach DATABASE release was unsuccessful. Your application is currently running without an attached DATABASE_URL.\n'))
   })
+
+  it('checks release phase for attach failure and detach success', () => {
+    api.get('/apps/myapp/releases').reply(200, [])
+    return expect(cmd.run({app: 'myapp', args: {}, flags: {}}), 'to be rejected')
+  })
 })
