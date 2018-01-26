@@ -75,29 +75,34 @@ function * run (context, heroku) {
       let detach = releases.find((release) => release.description.includes('Detach DATABASE'))
 
       if (!attach || !detach) {
-        throw new Error(`Unable to find Detach and Attach DATABASE releases ${cli.color.app(app)}`)
+        throw new Error('Unable to check release phase. Check your Attach DATABASE release for failures.')
       }
 
+      let endTime = Date.now() + 900000 // 15 minutes from now
       let [attachId, detachId] = [attach.id, detach.id]
       while (true) {
-        let attach = yield heroku.get(`/apps/${app}/releases/${attachId}`)
+        let attach = yield fetcher.release(app, attachId)
         if (attach && attach.status === 'succeeded') {
           let msg = 'pg:promote succeeded.'
-          let detach = yield heroku.get(`/apps/${app}/releases/${detachId}`)
+          let detach = yield fetcher.release(app, detachId)
           if (detach && detach.status === 'failed') {
             msg += ` It is safe to ignore the failed ${detach.description} release.`
           }
           return cli.action.done(msg)
         } else if (attach && attach.status === 'failed') {
           let msg = `pg:promote failed because ${attach.description} release was unsuccessful. Your application is currently running `
-          let detach = yield heroku.get(`/apps/${app}/releases/${detachId}`)
+          let detach = yield fetcher.release(app, detachId)
           if (detach && detach.status === 'succeeded') {
             msg += 'without an attached DATABASE_URL.'
           } else {
-            msg += `with ${current.addon.name} attached as DATABASE_URL`
+            msg += `with ${current.addon.name} attached as DATABASE_URL.`
           }
+          msg += ' Check your release phase logs for failure causes.'
           return cli.action.done(msg)
+        } else if (Date.now() > endTime) {
+          return cli.action.done('timeout. Check your Attach DATABASE release for failures.')
         }
+
         yield new Promise((resolve) => setTimeout(resolve, 5000))
       }
     }))
