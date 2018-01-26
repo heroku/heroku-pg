@@ -33,7 +33,9 @@ const cmd = proxyquire('../../commands/connection_pooling', {
 
 describe('pg:connection-polling:attach', () => {
   let api, pg
-  let name = 'default'
+  let defaultCredential = 'default'
+  let readonlyCredential = 'readonly'
+  let attachmentName = 'CONNECTION_POOL'
 
   beforeEach(() => {
     api = nock('https://api.heroku.com')
@@ -50,16 +52,48 @@ describe('pg:connection-polling:attach', () => {
     api.done()
   })
 
-  context('with pgbouncer enabled', () => {
+  context('includes a credential', () => {
     beforeEach(() => {
       pg.post(`/client/v11/databases/${addon.name}/connection-pooling`, {
-        credential: name
+        credential: readonlyCredential
       }).reply(201, {name: 'HEROKU_COLOR'})
     })
 
-    it('attaches the pgbouncer url', () => {
-      return cmd.run({app: 'myapp', args: {database: 'postgres-1'}, flags: {credential: name}})
+    it('attaches pgbouncer with readonly credential', () => {
+      return cmd.run({app: 'myapp', args: {database: 'postgres-1'}, flags: {credential: readonlyCredential}})
       .then(() => expect(cli.stdout, 'to equal', ``))
+      .then(() => expect(cli.stderr, 'to contain', 'Enabling Connection Pooling for credential ' + readonlyCredential))
+      .then(() => expect(cli.stderr, 'to contain', 'Setting HEROKU_COLOR config vars and restarting myapp... done, v0\n'))
+    })
+  })
+
+  context('includes an attachment name', () => {
+    beforeEach(() => {
+      pg.post(`/client/v11/databases/${addon.name}/connection-pooling`, {
+        credential: defaultCredential,
+        name: attachmentName
+      }).reply(201, {name: attachmentName})
+    })
+
+    it('attaches pgbouncer with attachment name', () => {
+      return cmd.run({app: 'myapp', args: {database: 'postgres-1'}, flags: {as: attachmentName}})
+      .then(() => expect(cli.stdout, 'to equal', ``))
+      .then(() => expect(cli.stderr, 'to contain', 'Enabling Connection Pooling on'))
+      .then(() => expect(cli.stderr, 'to contain', `Setting ${attachmentName} config vars and restarting myapp... done, v0\n`))
+    })
+  })
+
+  context('base command with no credential or attachment name', () => {
+    beforeEach(() => {
+      pg.post(`/client/v11/databases/${addon.name}/connection-pooling`, {
+        credential: defaultCredential
+      }).reply(201, {name: 'HEROKU_COLOR'})
+    })
+
+    it('attaches pgbouncer with default credential', () => {
+      return cmd.run({app: 'myapp', args: {database: 'postgres-1'}, flags: {}})
+      .then(() => expect(cli.stdout, 'to equal', ``))
+      .then(() => expect(cli.stderr, 'to contain', 'Enabling Connection Pooling on'))
       .then(() => expect(cli.stderr, 'to contain', 'Setting HEROKU_COLOR config vars and restarting myapp... done, v0\n'))
     })
   })
