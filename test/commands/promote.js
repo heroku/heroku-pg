@@ -7,10 +7,6 @@ const nock = require('nock')
 const proxyquire = require('proxyquire')
 
 const expectedMessage = `Ensuring an alternate alias for existing DATABASE_URL... RED_URL
- ▸    Detaching DATABASE. If you are using the release phase feature
- ▸    (https://devcenter.heroku.com/articles/release-phase), pg:promote can
- ▸    cause a failed release. Please double checkthe releases and make sure the
- ▸    database is properly promoted.
 Promoting PURPLE to DATABASE_URL on myapp... done
 `
 
@@ -36,6 +32,7 @@ describe('pg:promote when argument is database', () => {
 
   beforeEach(() => {
     api = nock('https://api.heroku.com:443')
+    api.get('/apps/myapp/formation').reply(200, [])
     cli.mockConsole()
   })
 
@@ -112,6 +109,7 @@ describe('pg:promote when argument is a credential attachment', () => {
 
   beforeEach(() => {
     api = nock('https://api.heroku.com:443')
+    api.get('/apps/myapp/formation').reply(200, [])
     cli.mockConsole()
   })
 
@@ -239,5 +237,80 @@ describe('pg:promote when argument is a credential attachment', () => {
     ])
     const err = new Error(`PURPLE is already promoted on myapp`)
     return expect(cmd.run({app: 'myapp', args: {}, flags: {}}), 'to be rejected with', err)
+  })
+})
+
+describe('pg:promote when release phase is present', () => {
+  let api
+
+  const attachment = {
+    name: 'PURPLE',
+    addon: {name: 'postgres-1'},
+    namespace: 'credential:hello'
+  }
+
+  const fetcher = () => {
+    return {
+      attachment: () => attachment
+    }
+  }
+
+  const cmd = proxyquire('../../commands/promote', {
+    '../lib/fetcher': fetcher
+  })
+
+  beforeEach(() => {
+    api = nock('https://api.heroku.com:443')
+    api.get('/apps/myapp/formation').reply(200, [{type: 'release'}])
+    api.get('/apps/myapp/addon-attachments').reply(200, [
+      {name: 'DATABASE', addon: {name: 'postgres-1'}, namespace: 'credential:goodbye'},
+      {name: 'RED', addon: {name: 'postgres-1'}, namespace: 'credential:goodbye'},
+      {name: 'PURPLE', addon: {name: 'postgres-1'}, namespace: 'credential:hello'}
+    ])
+    api.post('/addon-attachments', {
+      name: 'DATABASE',
+      app: {name: 'myapp'},
+      addon: {name: 'postgres-1'},
+      namespace: 'credential:hello',
+      confirm: 'myapp'
+    }).reply(201)
+    cli.mockConsole()
+  })
+
+  afterEach(() => {
+    nock.cleanAll()
+    api.done()
+  })
+
+  it('checks release phase', () => {
+    api.get('/apps/myapp/releases').reply(200, [{id: 1, description: 'Attach DATABASE'}, {id: 2, description: 'Detach DATABASE'}])
+    api.get('/apps/myapp/releases/1').reply(200, {status: 'succeeded'})
+    api.get('/apps/myapp/releases/2').reply(200, {status: 'succeeded'})
+    return cmd.run({app: 'myapp', args: {}, flags: {}})
+        .then(() => expect(cli.stderr, 'to equal', expectedMessage + 'Checking release phase... pg:promote succeeded.\n'))
+  })
+
+  it('checks release phase for detach failure', () => {
+    api.get('/apps/myapp/releases').reply(200, [{id: 1, description: 'Attach DATABASE'}, {id: 2, description: 'Detach DATABASE'}])
+    api.get('/apps/myapp/releases/1').reply(200, {status: 'succeeded'})
+    api.get('/apps/myapp/releases/2').reply(200, {status: 'failed'})
+    return cmd.run({app: 'myapp', args: {}, flags: {}})
+        .then(() => expect(cli.stderr, 'to equal', expectedMessage + 'Checking release phase... pg:promote succeeded. It is safe to ignore the failed undefined release.\n'))
+  })
+
+  it('checks release phase for attach failure', () => {
+    api.get('/apps/myapp/releases').reply(200, [{id: 1, description: 'Attach DATABASE'}, {id: 2, description: 'Detach DATABASE'}])
+    api.get('/apps/myapp/releases/1').reply(200, {status: 'failed', description: 'Attach DATABASE'})
+    api.get('/apps/myapp/releases/2').reply(200, {status: 'failed', description: 'Attach DATABASE'})
+    return cmd.run({app: 'myapp', args: {}, flags: {}})
+        .then(() => expect(cli.stderr, 'to equal', expectedMessage + 'Checking release phase... pg:promote failed because Attach DATABASE release was unsuccessful. Your application is currently running with postgres-1 attached as DATABASE_URL\n'))
+  })
+
+  it('checks release phase for attach failure and detach success', () => {
+    api.get('/apps/myapp/releases').reply(200, [{id: 1, description: 'Attach DATABASE'}, {id: 2, description: 'Detach DATABASE'}])
+    api.get('/apps/myapp/releases/1').reply(200, {status: 'failed', description: 'Attach DATABASE'})
+    api.get('/apps/myapp/releases/2').reply(200, {status: 'succeeded', description: 'Attach DATABASE'})
+    return cmd.run({app: 'myapp', args: {}, flags: {}})
+        .then(() => expect(cli.stderr, 'to equal', expectedMessage + 'Checking release phase... pg:promote failed because Attach DATABASE release was unsuccessful. Your application is currently running without an attached DATABASE_URL.\n'))
   })
 })
