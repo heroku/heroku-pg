@@ -11,13 +11,13 @@ function * run (context, heroku) {
 
   let db = yield fetcher.addon(app, args.database)
   let addon = yield heroku.get(`/addons/${encodeURIComponent(db.name)}`)
-  let credential = `${flags.credential || 'default'}`
+  let credential = flags.credential || 'default'
 
   if (util.starterPlan(db)) throw new Error('This operation is not supported by Hobby tier databases.')
 
   let attachment = yield cli.action(
     `Enabling Connection Pooling${credential === 'default' ? '' : ' for credential ' + cli.color.addon(credential)} on ${cli.color.addon(addon.name)} to ${cli.color.app(app)}`,
-    heroku.post(`/client/v11/databases/${db.name}/connection-pooling`, {
+    heroku.post(`/client/v11/databases/${encodeURIComponent(db.name)}/connection-pooling`, {
       body: { name: flags.as, credential: credential },
       host: host(db)
     })
