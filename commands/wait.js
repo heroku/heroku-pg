@@ -2,6 +2,7 @@
 
 const cli = require('heroku-cli-util')
 const co = require('co')
+const path = require('path')
 
 async function run (context, heroku) {
   const debug = require('debug')('heroku-pg')
@@ -35,14 +36,23 @@ async function run (context, heroku) {
       }
 
       if (status['error?']) {
-        notify({sound: true, subtitle: 'error', message: `${name} ${status['message']}`})
+        notify({
+          sound: true,
+          subtitle: 'error',
+          message: `${name} ${status['message']}`,
+          contentImage: path.join(__dirname, '../assets/error.png')
+        })
         cli.error(status['message'])
         cli.exit(1)
       }
 
       if (!status['waiting?']) {
         if (waiting) {
-          notify({sound: true, message: `${name} is ${status['message']}`})
+          notify({
+            sound: true,
+            message: `${name} is ${status['message']}`,
+            contentImage: path.join(__dirname, '../assets/success.png')
+          })
           cli.action.done(status.message)
         }
         return
