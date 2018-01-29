@@ -69,8 +69,13 @@ function * run (context, heroku) {
 
   if (releasePhase) {
     yield cli.action('Checking release phase', co(function * () {
-      let releases = (yield heroku.get(`/apps/${app}/releases`))
-          .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
+      let releases = yield heroku.request({
+        path: `/apps/${app}/releases`,
+        partial: true,
+        headers: {
+          'Range': `version ..; max=5, order=desc`
+        }
+      })
       let attach = releases.find((release) => release.description.includes('Attach DATABASE'))
       let detach = releases.find((release) => release.description.includes('Detach DATABASE'))
 
