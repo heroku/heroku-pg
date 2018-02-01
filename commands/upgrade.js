@@ -40,5 +40,8 @@ module.exports = {
   needsAuth: true,
   args: [{name: 'database', optional: true}],
   flags: [{name: 'confirm', char: 'c', hasValue: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:upgrade --app murmuring-headland-14719`
 }

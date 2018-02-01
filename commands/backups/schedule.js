@@ -80,5 +80,8 @@ module.exports = {
   flags: [
     {name: 'at', required: true, hasValue: true, description: "at a specific (24h) hour in the given timezone. Defaults to UTC. --at '[HOUR]:00 [TIMEZONE]'"}
   ],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+  $ heroku pg:backups:schedule --app murmuring-headland-14719 --at '01:00 CDT'`
 }

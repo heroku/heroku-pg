@@ -31,5 +31,8 @@ module.exports = {
     {name: 'pid'},
     {name: 'database', optional: true}
   ],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:kill 27499 postgresql-orange-12801`
 }

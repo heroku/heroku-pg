@@ -80,7 +80,21 @@ let cmd = {
   needsApp: true,
   needsAuth: true,
   args: [{name: 'database', optional: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:info postgresql-orange-59502
+    === DATABASE_URL
+    Plan:        Hobby-dev
+    Status:      Available
+    Connections: 0/20
+    PG Version:  9.6.4
+    Created:     2017-09-05 20:23 UTC
+    Data Size:   7.2 MB
+    Tables:      0
+    Rows:        0/10000 (In compliance)
+    Fork/Follow: Unsupported
+    Rollback:    Unsupported`
 }
 
 module.exports = [

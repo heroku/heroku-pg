@@ -70,5 +70,8 @@ module.exports = {
     {name: 'force', description: 'forces rotating the targeted credentials', hasValue: false}
   ],
   args: [{name: 'database', optional: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:credentials:rotate $PROD_DB --all --confirm --app murmuring-headland-14719`
 }

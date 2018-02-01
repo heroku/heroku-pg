@@ -27,5 +27,8 @@ module.exports = {
   needsAuth: true,
   args: [{name: 'backup_id'}],
   flags: [{name: 'confirm', char: 'c', hasValue: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:backups:delete 4cd852`
 }

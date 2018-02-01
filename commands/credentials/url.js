@@ -57,5 +57,8 @@ module.exports = {
     {name: 'name', char: 'n', description: 'which credential to show (default credentials if not specified)', hasValue: true}
   ],
   args: [{name: 'database', optional: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:credentials:url $DEV_DB --app murmuring-headland-14719`
 }

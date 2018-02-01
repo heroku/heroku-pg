@@ -26,5 +26,12 @@ module.exports = {
   needsAuth: true,
   args: [{name: 'database', optional: true}],
   flags: [{name: 'confirm', char: 'c', hasValue: true}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:reset --app murmuring-headland-14719
+     ▸    WARNING: Destructive action
+     ▸    postgresql-squared-1337 will lose all of its data
+     ▸
+     ▸    To proceed, type murmuring-headland-14719 or re-run this command with --confirm murmuring-headland-14719`
 }

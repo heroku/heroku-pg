@@ -31,7 +31,7 @@ module.exports = {
   needsAuth: true,
   help: `Example:
 
-    heroku pg:credentials:repair-default postgresql-something-12345
+    $ heroku pg:credentials:repair-default postgresql-something-12345
 `,
   args: [{name: 'database', optional: true}],
   flags: [

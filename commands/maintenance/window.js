@@ -31,7 +31,7 @@ module.exports = {
 
 Example:
 
-    heroku pg:maintenance:window postgres-slippery-100 "Sunday 06:00"`,
+    $ heroku pg:maintenance:window postgres-slippery-100 "Sunday 06:00"`,
   needsApp: true,
   needsAuth: true,
   args: [{name: 'database'}, {name: 'window'}],

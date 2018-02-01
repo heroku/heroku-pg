@@ -84,5 +84,8 @@ module.exports = {
     {name: 'verbose', char: 'v'},
     {name: 'confirm', char: 'c', hasValue: true}
   ],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:restore 1ac8za1 --app murmuring-headland-14719`
 }

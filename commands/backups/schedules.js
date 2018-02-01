@@ -28,5 +28,8 @@ module.exports = {
   description: 'list backup schedule',
   needsApp: true,
   needsAuth: true,
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:backups:schedules --app murmuring-headland-14719`
 }

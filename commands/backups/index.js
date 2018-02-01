@@ -124,5 +124,16 @@ module.exports = {
     {name: 'at', hasValue: true, hidden: true},
     {name: 'quiet', char: 'q', hidden: true}
   ],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:backups --app murmuring-headland-14719
+    === Backups
+    No backups. Capture one with heroku pg:backups:capture
+
+    === Restores
+    No restores found. Use heroku pg:backups:restore to restore a backup
+
+    === Copies
+    No copies found. Use heroku pg:copy to copy a database to another`
 }

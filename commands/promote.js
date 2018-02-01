@@ -121,5 +121,8 @@ module.exports = {
   needsApp: true,
   needsAuth: true,
   args: [{name: 'database'}],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+	help: `Example:
+
+    $ heroku pg:promote $DB_SLAVE --app murmuring-headland-14179`
 }

@@ -62,5 +62,8 @@ module.exports = {
     {name: 'snapshot'},
     {name: 'verbose', char: 'v'}
   ],
-  run: cli.command({preauth: true}, co.wrap(run))
+  run: cli.command({preauth: true}, co.wrap(run)),
+  help: `Example:
+
+    $ heroku pg:backups:capture --app murmuring-headland-14719`
 }

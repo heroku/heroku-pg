@@ -26,7 +26,7 @@ module.exports = {
   description: 'destroys a link between data stores',
   help: `Example:
 
-    heroku pg:links:destroy HEROKU_POSTGRESQL_CERULEAN redis-symmetrical-100`,
+    $ heroku pg:links:destroy HEROKU_POSTGRESQL_CERULEAN redis-symmetrical-100`,
   needsApp: true,
   needsAuth: true,
   args: [{name: 'database'}, {name: 'link'}],
