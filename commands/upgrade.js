@@ -25,7 +25,7 @@ ${cli.color.addon(db.name)} will be upgraded to a newer PostgreSQL version, stop
 
 This cannot be undone.`)
 
-  let body = flags.version ? {host: host(db), version: flags.version} : {host: host(db)}
+  let body = flags.version ? {host: host(db), body: {version: flags.version}} : {host: host(db)}
 
   yield cli.action(`Starting upgrade of ${cli.color.addon(db.name)}`, co(function * () {
     yield heroku.post(`/client/v11/databases/${db.id}/upgrade`, body)
