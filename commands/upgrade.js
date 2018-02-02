@@ -41,7 +41,7 @@ module.exports = {
   args: [{name: 'database', optional: true}],
   flags: [
     {name: 'confirm', char: 'c', hasValue: true},
-    {name: 'version', char: 'v', description: 'PostgreSQL version to upgrade to', optional: true, hasValue: true}
+    {name: 'version', char: 'v', description: 'PostgreSQL version to upgrade to', hasValue: true}
   ],
   run: cli.command({preauth: true}, co.wrap(run))
 }
