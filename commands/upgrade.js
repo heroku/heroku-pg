@@ -9,6 +9,7 @@ function * run (context, heroku) {
   const fetcher = require('../lib/fetcher')(heroku)
   let {app, args, flags} = context
   let db = yield fetcher.addon(app, args.database)
+  let target_version = flags.version
 
   if (util.starterPlan(db)) throw new Error('pg:upgrade is only available for follower production databases')
 
@@ -26,7 +27,7 @@ ${cli.color.addon(db.name)} will be upgraded to a newer PostgreSQL version, stop
 This cannot be undone.`)
 
   yield cli.action(`Starting upgrade of ${cli.color.addon(db.name)}`, co(function * () {
-    yield heroku.post(`/client/v11/databases/${db.id}/upgrade`, {host: host(db)})
+    yield heroku.post(`/client/v11/databases/${db.id}/upgrade`, {host: host(db), version: target_version})
     cli.action.done(`${cli.color.cmd('heroku pg:wait')} to track status`)
   }))
 }
