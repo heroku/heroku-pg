@@ -43,4 +43,16 @@ describe('pg:unfollow', () => {
     return cmd.run({app: 'myapp', args: {}, flags: {confirm: 'myapp'}})
     .then(() => expect(cli.stderr, 'to equal', 'postgres-1 unfollowing... done\n'))
   })
+
+  it('warns if there is a lag', () => {
+    api.get('/apps/myapp/config-vars').reply(200, {DATABASE_URL: 'postgres://db1'})
+    pg.get('/client/v11/databases/1').reply(200, {following: 'postgres://db1'})
+    pg.put('/client/v11/databases/1/unfollow').reply(200, { leader_xact: 100, follower_xact: 50 })
+    return cmd.run({app: 'myapp', args: {}, flags: {confirm: 'myapp'}})
+        .then(() => expect(cli.stderr, 'to equal', `postgres-1 unfollowing... done
+ ▸    you unfollowed this database while the leader transaction was 100 and the
+ ▸    follower transaction was 50. Due to the lag, you may experience read-only
+ ▸    mode with the unfollowed database (postgres-1) for a while.
+`))
+  })
 })
