@@ -55,7 +55,7 @@
     "url": "https://github.com/heroku/heroku-pg.git"
   },
   "scripts": {
-    "test": "TZ=utc nyc mocha && standard",
+    "test": "TZ=utc mocha && standard",
     "release": "np",
     "prepublishOnly": "oclif-dev manifest",
     "postpublish": "rm .oclif.manifest.json"
