@@ -5,7 +5,6 @@ const cli = require('heroku-cli-util')
 
 function * run (context, heroku) {
   const url = require('url')
-  const util = require('../lib/util')
   const host = require('../lib/host')
   const pgbackups = require('../lib/pgbackups')(context, heroku)
   const fetcher = require('../lib/fetcher')(heroku)
@@ -15,12 +14,12 @@ function * run (context, heroku) {
   let resolve = co.wrap(function * (db) {
     if (db.match(/^postgres:\/\//)) {
       let uri = url.parse(db)
-      let name = uri.path ? uri.path.slice(1) : ''
-      let hostname = `${uri.host}:${uri.port || 5432}`
+      let dbname = uri.path ? uri.path.slice(1) : ''
+      let host = `${uri.hostname}:${uri.port || 5432}`
       return {
-        name: name ? `database ${name} on ${hostname}` : `database on ${hostname}`,
+        name: dbname ? `database ${dbname} on ${host}` : `database on ${host}`,
         url: db,
-        confirm: name || uri.host
+        confirm: dbname || uri.host
       }
     } else {
       let attachment = yield fetcher.attachment(app, db)
@@ -32,7 +31,7 @@ function * run (context, heroku) {
       attachment.addon = addon
       return {
         name: attachment.name.replace(/^HEROKU_POSTGRESQL_/, '').replace(/_URL$/, ''),
-        url: config[util.getUrl(addon.config_vars)],
+        url: config[attachment.name + '_URL'],
         attachment,
         confirm: app
       }
@@ -61,6 +60,14 @@ Data from ${cli.color.yellow(source.name)} will then be transferred to ${cli.col
       host: host(attachment.addon)
     })
   }))
+
+  if (source.attachment) {
+    let credentials = yield heroku.get(`/postgres/v0/databases/${source.attachment.addon.name}/credentials`,
+                                     { host: host(source.attachment.addon) })
+    if (credentials.length > 1) {
+      cli.action.warn(`pg:copy will only copy your default credential and the data it has access to. Any additional credentials and data that only they can access will not be copied.`)
+    }
+  }
   yield pgbackups.wait('Copying', copy.uuid, interval, flags.verbose, attachment.addon.app.name)
 }
 
