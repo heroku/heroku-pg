@@ -13,7 +13,6 @@ async function run (context, heroku) {
   const notify = require('../lib/notify')(context)
 
   let waitFor = async function waitFor (db) {
-    const wait = require('co-wait')
     let interval = parseInt(context.flags['wait-interval'])
     if (!interval || interval < 0) interval = 5
 
@@ -66,7 +65,11 @@ async function run (context, heroku) {
 
       cli.action.status(status.message)
 
-      await wait(interval * 1000)
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve()
+        }, interval * 1000)
+      })
     }
   }
 
