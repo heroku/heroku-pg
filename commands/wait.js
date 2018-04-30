@@ -65,11 +65,7 @@ async function run (context, heroku) {
 
       cli.action.status(status.message)
 
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve()
-        }, interval * 1000)
-      })
+      await new Promise((resolve) => setTimeout(resolve, interval * 1000))
     }
   }
 
