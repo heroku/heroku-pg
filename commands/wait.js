@@ -3,6 +3,7 @@
 const cli = require('heroku-cli-util')
 const co = require('co')
 const path = require('path')
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 async function run (context, heroku) {
   const debug = require('debug')('heroku-pg')
@@ -65,7 +66,7 @@ async function run (context, heroku) {
 
       cli.action.status(status.message)
 
-      await new Promise((resolve) => setTimeout(resolve, interval * 1000))
+      await wait(interval * 1000)
     }
   }
 
