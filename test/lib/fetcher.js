@@ -282,6 +282,47 @@ describe('fetcher', () => {
         }))
       })
 
+      it('returns DATABASE_URL if another addon has a bad attachment', () => {
+        const err = new Error()
+        err.statusCode = 404
+        err.body = {id: 'not_found'}
+        err.message = 'Not Found'
+
+        stub.withArgs(sinon.match.any, 'myapp', 'attach-app::DATABASE_URL').returns(Promise.reject(err))
+
+        api.get('/apps/attach-app/config-vars').reply(200, {
+          'DATABASE_URL': 'postgres://pguser:pgpass@pghost.com/pgdb',
+          'HEROKU_POSTGRESQL_PINK_URL': 'postgres://pguser:pgpass@pghost.com/pgdb'
+        })
+
+        let plan = {name: 'heroku-postgresql:hobby-dev'}
+        let attachments = [
+          {
+            app: {name: 'attach-app'},
+            addon: {id: 100, name: 'postgres-1', plan},
+            config_vars: ['HEROKU_POSTGRESQL_PINK_URL']
+          },
+          {
+            app: {name: 'attach-app'},
+            addon: {id: 100, name: 'postgres-1', plan},
+            config_vars: []
+          }
+        ]
+
+        api.get('/apps/attach-app/addon-attachments').reply(200, attachments)
+
+        return fetcher(new Heroku()).database('myapp', 'attach-app::DATABASE_URL')
+        .then((db) => expect(db, 'to equal', {
+          user: 'pguser',
+          password: 'pgpass',
+          database: 'pgdb',
+          host: 'pghost.com',
+          port: null,
+          attachment: attachments[0],
+          url: url.parse('postgres://pguser:pgpass@pghost.com/pgdb')
+        }))
+      })
+
       it('returns when DATABASE db arg', () => {
         const err = new Error()
         err.statusCode = 404
