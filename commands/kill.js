@@ -9,12 +9,12 @@ function * run (context, heroku) {
 
   const {app, args, flags} = context
   const {pid, database} = args
-  const {force} = flags
+  const {force, terminate} = flags
 
   let db = yield fetcher(heroku).database(app, database)
 
   let query = `
-SELECT ${force ? 'pg_terminate_backend' : 'pg_cancel_backend'}(${parseInt(pid)});`
+SELECT ${force || terminate ? 'pg_terminate_backend' : 'pg_cancel_backend'}(${parseInt(pid)});`
 
   let output = yield psql.exec(db, query)
   process.stdout.write(output)
@@ -26,7 +26,7 @@ module.exports = {
   description: 'kill a query',
   needsApp: true,
   needsAuth: true,
-  flags: [{name: 'force', char: 'f'}],
+  flags: [{name: 'force', char: 'f'}, {name: 'terminate', char: 't'}],
   args: [
     {name: 'pid'},
     {name: 'database', optional: true}
