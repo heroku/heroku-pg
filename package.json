@@ -7,7 +7,7 @@
     "url": "https://github.com/heroku/heroku-pg/issues"
   },
   "dependencies": {
-    "@heroku-cli/plugin-addons": "^1.2.29",
+    "@heroku-cli/plugin-addons": "^1.2.30",
     "bytes": "^3.0.0",
     "co": "^4.6.0",
     "co-wait": "^0.0.0",
@@ -22,20 +22,20 @@
     "tunnel-ssh": "^4.1.4"
   },
   "devDependencies": {
-    "@oclif/dev-cli": "^1.13.22",
+    "@oclif/dev-cli": "^1.13.25",
     "@oclif/plugin-legacy": "^1.0.15",
     "heroku-client": "^3.0.6",
-    "mocha": "^5.1.1",
+    "mocha": "^5.2.0",
     "nock": "9.2.6",
     "np": "^2.20.1",
     "nyc": "^11.8.0",
     "proxyquire": "^2.0.1",
     "sinon": "<2",
     "standard": "^10.0.2",
-    "unexpected": "^10.37.7"
+    "unexpected": "^10.38.0"
   },
   "files": [
-    ".oclif.manifest.json",
+    "oclif.manifest.json",
     "index.js",
     "assets",
     "lib",
@@ -55,9 +55,11 @@
     "test": "TZ=utc nyc mocha && standard",
     "release": "np",
     "prepublishOnly": "oclif-dev manifest",
-    "postpublish": "rm .oclif.manifest.json"
+    "postpublish": "rm oclif.manifest.json",
+    "version": "oclif-dev readme && git add README.md"
   },
   "cli-engine": {
+    "bin": "heroku",
     "topics": {
       "pg": {
         "description": "manage postgresql databases"
