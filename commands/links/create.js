@@ -37,9 +37,7 @@ module.exports = {
   topic: 'pg',
   command: 'links:create',
   description: 'create a link between data stores',
-  help: `Example:
-
-    heroku pg:links:create HEROKU_REDIS_RED HEROKU_POSTGRESQL_CERULEAN`,
+  examples: '$ heroku pg:links:create HEROKU_REDIS_RED HEROKU_POSTGRESQL_CERULEAN',
   needsApp: true,
   needsAuth: true,
   args: [{name: 'remote'}, {name: 'database'}],

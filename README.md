@@ -244,10 +244,8 @@ OPTIONS
   -r, --remote=remote          git remote of app to use
   --as=as                      name for add-on attachment
 
-DESCRIPTION
-  Example:
-
-     heroku pg:connection-pooling:attach postgresql-something-12345 --credential cred-name
+EXAMPLES
+  $ heroku pg:connection-pooling:attach postgresql-something-12345 --credential cred-name
 ```
 
 ## `heroku pg:copy SOURCE TARGET`
@@ -296,10 +294,8 @@ OPTIONS
   -n, --name=name      (required) name of the new credential within the database
   -r, --remote=remote  git remote of app to use
 
-DESCRIPTION
-  Example:
-
-       heroku pg:credentials:create postgresql-something-12345 --name new-cred-name
+EXAMPLES
+  $ heroku pg:credentials:create postgresql-something-12345 --name new-cred-name
 ```
 
 ## `heroku pg:credentials:destroy [DATABASE]`
@@ -316,10 +312,8 @@ OPTIONS
   -n, --name=name        (required) unique identifier for the credential
   -r, --remote=remote    git remote of app to use
 
-DESCRIPTION
-  Example:
-
-       heroku pg:credentials:destroy postgresql-transparent-56874 --name cred-name -a woodstock-production
+EXAMPLES
+  $ heroku pg:credentials:destroy postgresql-transparent-56874 --name cred-name -a woodstock-production
 ```
 
 ## `heroku pg:credentials:repair-default [DATABASE]`
@@ -335,10 +329,8 @@ OPTIONS
   -c, --confirm=confirm
   -r, --remote=remote    git remote of app to use
 
-DESCRIPTION
-  Example:
-
-       heroku pg:credentials:repair-default postgresql-something-12345
+EXAMPLES
+  $ heroku pg:credentials:repair-default postgresql-something-12345
 ```
 
 ## `heroku pg:credentials:rotate [DATABASE]`
@@ -456,10 +448,8 @@ OPTIONS
   -r, --remote=remote  git remote of app to use
   --as=as              name of link to create
 
-DESCRIPTION
-  Example:
-
-       heroku pg:links:create HEROKU_REDIS_RED HEROKU_POSTGRESQL_CERULEAN
+EXAMPLES
+  $ heroku pg:links:create HEROKU_REDIS_RED HEROKU_POSTGRESQL_CERULEAN
 ```
 
 ## `heroku pg:links:destroy DATABASE LINK`
@@ -475,10 +465,8 @@ OPTIONS
   -c, --confirm=confirm
   -r, --remote=remote    git remote of app to use
 
-DESCRIPTION
-  Example:
-
-       heroku pg:links:destroy HEROKU_POSTGRESQL_CERULEAN redis-symmetrical-100
+EXAMPLES
+  $ heroku pg:links:destroy HEROKU_POSTGRESQL_CERULEAN redis-symmetrical-100
 ```
 
 ## `heroku pg:maintenance [DATABASE]`
@@ -523,9 +511,8 @@ OPTIONS
 DESCRIPTION
   All times are in UTC.
 
-  Example:
-
-       heroku pg:maintenance:window postgres-slippery-100 "Sunday 06:00"
+EXAMPLES
+  $ heroku pg:maintenance:window postgres-slippery-100 "Sunday 06:00"
 ```
 
 ## `heroku pg:outliers [DATABASE]`
@@ -612,13 +599,12 @@ DESCRIPTION
   To create an empty remote database, run `createdb` with connection command-line options (run `createdb --help` for 
   details).
 
-  Examples:
+EXAMPLES
+  # pull Heroku DB named postgresql-swimmingly-100 into local DB mylocaldb that must not exist
+  $ heroku pg:pull postgresql-swimmingly-100 mylocaldb --app sushi
 
-       # pull Heroku DB named postgresql-swimmingly-100 into local DB mylocaldb that must not exist
-       $ heroku pg:pull postgresql-swimmingly-100 mylocaldb --app sushi
-
-       # pull Heroku DB named postgresql-swimmingly-100 into empty remote DB at postgres://myhost/mydb
-       $ heroku pg:pull postgresql-swimmingly-100 postgres://myhost/mydb --app sushi
+  # pull Heroku DB named postgresql-swimmingly-100 into empty remote DB at postgres://myhost/mydb
+  $ heroku pg:pull postgresql-swimmingly-100 postgres://myhost/mydb --app sushi
 ```
 
 ## `heroku pg:push SOURCE TARGET`
@@ -642,13 +628,12 @@ DESCRIPTION
   SOURCE must be either the name of a database existing on your localhost or the
   fully qualified URL of a remote database.
 
-  Examples:
+EXAMPLES
+  # push mylocaldb into a Heroku DB named postgresql-swimmingly-100
+  $ heroku pg:push mylocaldb postgresql-swimmingly-100
 
-       # push mylocaldb into a Heroku DB named postgresql-swimmingly-100
-       $ heroku pg:push mylocaldb postgresql-swimmingly-100
-
-       # push remote DB at postgres://myhost/mydb into a Heroku DB named postgresql-swimmingly-100
-       $ heroku pg:push postgres://myhost/mydb postgresql-swimmingly-100
+  # push remote DB at postgres://myhost/mydb into a Heroku DB named postgresql-swimmingly-100
+  $ heroku pg:push postgres://myhost/mydb postgresql-swimmingly-100
 ```
 
 ## `heroku pg:reset [DATABASE]`
