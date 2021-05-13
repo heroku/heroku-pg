@@ -1,0 +1,13 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: node:14
+    steps:
+      - run: echo "Skipping..."
+
+workflows:
+  test:
+    jobs:
+      - test
