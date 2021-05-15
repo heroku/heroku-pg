@@ -27,11 +27,8 @@ module.exports = {
   topic: 'pg',
   command: 'maintenance:window',
   description: 'set weekly maintenance window',
-  help: `All times are in UTC.
-
-Example:
-
-    heroku pg:maintenance:window postgres-slippery-100 "Sunday 06:00"`,
+  help: 'All times are in UTC.',
+  examples: '$ heroku pg:maintenance:window postgres-slippery-100 "Sunday 06:00"',
   needsApp: true,
   needsAuth: true,
   args: [{name: 'database'}, {name: 'window'}],

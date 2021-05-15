@@ -192,16 +192,12 @@ module.exports = [
 To empty a Heroku database for push run \`heroku pg:reset\`
 
 SOURCE must be either the name of a database existing on your localhost or the
-fully qualified URL of a remote database.
+fully qualified URL of a remote database.`,
+    examples: `# push mylocaldb into a Heroku DB named postgresql-swimmingly-100
+$ heroku pg:push mylocaldb postgresql-swimmingly-100
 
-Examples:
-
-    # push mylocaldb into a Heroku DB named postgresql-swimmingly-100
-    $ heroku pg:push mylocaldb postgresql-swimmingly-100
-
-    # push remote DB at postgres://myhost/mydb into a Heroku DB named postgresql-swimmingly-100
-    $ heroku pg:push postgres://myhost/mydb postgresql-swimmingly-100
-`,
+# push remote DB at postgres://myhost/mydb into a Heroku DB named postgresql-swimmingly-100
+$ heroku pg:push postgres://myhost/mydb postgresql-swimmingly-100`,
     run: cli.command({preauth: true}, co.wrap(push))
   }, cmd),
   Object.assign({
@@ -215,16 +211,12 @@ TARGET must be one of:
   * a fully qualified URL to a remote PostgreSQL server  => TARGET must exist and be empty
 
 To delete a local database run \`dropdb TARGET\`
-To create an empty remote database, run \`createdb\` with connection command-line options (run \`createdb --help\` for details).
+To create an empty remote database, run \`createdb\` with connection command-line options (run \`createdb --help\` for details).`,
+    examples: `# pull Heroku DB named postgresql-swimmingly-100 into local DB mylocaldb that must not exist
+$ heroku pg:pull postgresql-swimmingly-100 mylocaldb --app sushi
 
-Examples:
-
-    # pull Heroku DB named postgresql-swimmingly-100 into local DB mylocaldb that must not exist
-    $ heroku pg:pull postgresql-swimmingly-100 mylocaldb --app sushi
-
-    # pull Heroku DB named postgresql-swimmingly-100 into empty remote DB at postgres://myhost/mydb
-    $ heroku pg:pull postgresql-swimmingly-100 postgres://myhost/mydb --app sushi
-`,
+# pull Heroku DB named postgresql-swimmingly-100 into empty remote DB at postgres://myhost/mydb
+$ heroku pg:pull postgresql-swimmingly-100 postgres://myhost/mydb --app sushi`,
     run: cli.command({preauth: true}, co.wrap(pull))
   }, cmd)
 ]
