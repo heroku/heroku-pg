@@ -19,6 +19,9 @@ function * run (context, heroku) {
     process.stdout.write(yield psql.execFile(db, flags.file))
   } else {
     yield psql.interactive(db)
+    // sometimes psql hangs and causes the stdout "drain" event not to be fired in cli-ux
+    // so we force an exit here
+    cli.exit(0)
   }
 }
 
