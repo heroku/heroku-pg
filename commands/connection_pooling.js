@@ -42,10 +42,7 @@ module.exports = {
   description: 'add an attachment to a database using connection pooling',
   needsApp: true,
   needsAuth: true,
-  help: `Example:
-
-  heroku pg:connection-pooling:attach postgresql-something-12345 --credential cred-name
-`,
+  examples: '$ heroku pg:connection-pooling:attach postgresql-something-12345 --credential cred-name',
   args: [{name: 'database', optional: true}],
   flags: [
     {name: 'as', description: 'name for add-on attachment', hasValue: true},
