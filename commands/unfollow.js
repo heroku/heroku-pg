@@ -19,9 +19,14 @@ function * run (context, heroku) {
 ${cli.color.addon(db.name)} will become writeable and no longer follow ${origin}. This cannot be undone.
 `)
 
+  let response = { leader_xact: 0, follower_xact: 0 }
   yield cli.action(`${cli.color.addon(db.name)} unfollowing`, co(function * () {
-    yield heroku.put(`/client/v11/databases/${db.id}/unfollow`, {host: host(db)})
+    response = yield heroku.put(`/client/v11/databases/${db.id}/unfollow`, {host: host(db)})
   }))
+
+  if (response.leader_xact > response.follower_xact) {
+    cli.warn(`you unfollowed this database while the leader transaction was ${response.leader_xact} and the follower transaction was ${response.follower_xact}. Due to the lag, you may experience read-only mode with the unfollowed database (${db.name}) for a while.`)
+  }
 }
 
 module.exports = {
